@@ -1,0 +1,75 @@
+<section class="panel">
+  <header class="panel-header">
+    <div>
+      <small>Movimentação</small>
+      <h2>Realizar transferência</h2>
+    </div>
+  </header>
+
+  <div class="segmented-control">
+    <button
+      type="button"
+      [class.active]="mode.value === 'now'"
+      (click)="mode.setValue('now')"
+    >
+      Agora
+    </button>
+
+    <button
+      type="button"
+      [class.active]="mode.value === 'scheduled'"
+      (click)="mode.setValue('scheduled')"
+    >
+      Agendar
+    </button>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <label class="field">
+      <span>Conta de destino</span>
+
+      <select formControlName="destinationAccountId">
+        <option [ngValue]="0">Selecione a conta</option>
+
+        @for (account of accounts(); track account.id) {
+          @if (account.id !== sourceAccount().id) {
+            <option [ngValue]="account.id">
+              Conta #{{ account.id }} —
+              {{ account.personName }}
+            </option>
+          }
+        }
+      </select>
+    </label>
+
+    <label class="field">
+      <span>Valor</span>
+
+      <input
+        type="number"
+        min="0.01"
+        step="0.01"
+        formControlName="amount"
+      />
+    </label>
+
+    @if (mode.value === 'scheduled') {
+      <label class="field">
+        <span>Data e horário</span>
+
+        <input
+          type="datetime-local"
+          formControlName="scheduledAt"
+        />
+      </label>
+    }
+
+    <button type="submit" class="button-primary">
+      {{
+        mode.value === 'scheduled'
+          ? 'Agendar transferência'
+          : 'Transferir agora'
+      }}
+    </button>
+  </form>
+</section>

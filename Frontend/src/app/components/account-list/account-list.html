@@ -1,0 +1,67 @@
+<div class="card-grid">
+  @for (account of accounts(); track account.id) {
+    <article class="entity-card account-card">
+      <div class="card-top">
+        <span class="account-number">
+          Conta #{{ account.id }}
+        </span>
+
+        <span
+          class="badge"
+          [class.badge-success]="account.status === 'Active'"
+        >
+          {{ account.status }}
+        </span>
+      </div>
+
+      <h3>{{ account.personName }}</h3>
+
+      <div class="balance">
+        <small>Saldo disponível</small>
+        <strong>{{ currency(account.availableBalance) }}</strong>
+      </div>
+
+      <div class="account-summary">
+        <span>
+          Saldo
+          <strong>{{ currency(account.balance) }}</strong>
+        </span>
+
+        <span>
+          Cheque especial
+          <strong>{{ currency(account.overdraftLimit) }}</strong>
+        </span>
+      </div>
+
+      <footer class="card-actions">
+        <a
+          class="button-primary"
+          [routerLink]="['/contas', account.id]"
+        >
+          Visualizar
+        </a>
+
+        <button
+          type="button"
+          class="button-secondary"
+          (click)="edit.emit(account)"
+        >
+          Editar
+        </button>
+
+        <button
+          type="button"
+          class="button-danger"
+          (click)="remove.emit(account)"
+        >
+          Excluir
+        </button>
+      </footer>
+    </article>
+  } @empty {
+    <div class="empty-state">
+      <h3>Nenhuma conta cadastrada</h3>
+      <p>Crie uma conta e atribua a uma pessoa.</p>
+    </div>
+  }
+</div>

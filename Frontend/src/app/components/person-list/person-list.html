@@ -1,0 +1,59 @@
+<div class="card-grid">
+  @for (person of persons(); track person.id) {
+    <article class="entity-card">
+      <div class="card-top">
+        <div class="avatar">
+          {{ person.name?.charAt(0)?.toUpperCase() || '?' }}
+        </div>
+
+        <span
+          class="badge"
+          [class.badge-success]="person.accountId"
+        >
+          {{ person.accountId ? 'Com conta' : 'Sem conta' }}
+        </span>
+      </div>
+
+      <h3>{{ person.name }}</h3>
+
+      <div class="entity-information">
+        <span>{{ person.document || 'Documento não informado' }}</span>
+        <span>{{ person.email || 'E-mail não informado' }}</span>
+        <span>{{ person.phone || 'Telefone não informado' }}</span>
+      </div>
+
+      <footer class="card-actions">
+        @if (!person.accountId) {
+          <button
+            type="button"
+            class="button-primary"
+            (click)="createAccount.emit(person)"
+          >
+            Criar conta
+          </button>
+        }
+
+        <button
+          type="button"
+          class="button-secondary"
+          (click)="edit.emit(person)"
+        >
+          Editar
+        </button>
+
+        <button
+          type="button"
+          class="button-danger"
+          (click)="remove.emit(person)"
+        >
+          Excluir
+        </button>
+      </footer>
+    </article>
+  } @empty {
+    <div class="empty-state">
+      <h3>Nenhuma pessoa cadastrada</h3>
+      <p>Cadastre a primeira pessoa para começar.</p>
+    </div>
+  }
+</div>

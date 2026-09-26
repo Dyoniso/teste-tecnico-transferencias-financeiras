@@ -1,0 +1,94 @@
+<main class="page-container">
+  <section class="page-heading">
+    <div>
+      <span class="eyebrow">Administração</span>
+      <h1>Pessoas e contas</h1>
+      <p>
+        Cadastre pessoas, gerencie suas contas e acompanhe
+        os saldos.
+      </p>
+    </div>
+
+    <button
+      type="button"
+      class="button-primary"
+      (click)="
+        activeTab() === 'persons'
+          ? openPerson()
+          : openAccount()
+      "
+    >
+      {{ activeTab() === 'persons'
+        ? '+ Nova pessoa'
+        : '+ Nova conta'
+      }}
+    </button>
+  </section>
+
+  @if (error()) {
+    <div class="alert alert-error">
+      {{ error() }}
+    </div>
+  }
+
+  @if (success()) {
+    <div class="alert alert-success">
+      {{ success() }}
+    </div>
+  }
+
+  <nav class="tabs">
+    <button
+      type="button"
+      [class.active]="activeTab() === 'persons'"
+      (click)="activeTab.set('persons')"
+    >
+      Pessoas
+      <span>{{ persons().length }}</span>
+    </button>
+
+    <button
+      type="button"
+      [class.active]="activeTab() === 'accounts'"
+      (click)="activeTab.set('accounts')"
+    >
+      Contas
+      <span>{{ accounts().length }}</span>
+    </button>
+  </nav>
+
+  @if (loading()) {
+    <div class="loading">Carregando informações...</div>
+  } @else if (activeTab() === 'persons') {
+    <app-person-list
+      [persons]="persons()"
+      (edit)="openPerson($event)"
+      (remove)="deletePerson($event)"
+      (createAccount)="openAccount(null, $event.id)"
+    />
+  } @else {
+    <app-account-list
+      [accounts]="accounts()"
+      (edit)="openAccount($event)"
+      (remove)="deleteAccount($event)"
+    />
+  }
+
+  @if (personModal()) {
+    <app-person-form
+      [person]="editingPerson()"
+      (save)="savePerson($event)"
+      (close)="personModal.set(false)"
+    />
+  }
+
+  @if (accountModal()) {
+    <app-account-form
+      [persons]="persons()"
+      [account]="editingAccount()"
+      [selectedPersonId]="selectedPersonId()"
+      (save)="saveAccount($event)"
+      (close)="accountModal.set(false)"
+    />
+  }
+</main>

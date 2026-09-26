@@ -1,0 +1,134 @@
+<main class="page-container">
+  <a routerLink="/" class="back-link">
+    ← Voltar para pessoas e contas
+  </a>
+
+  @if (error()) {
+    <div class="alert alert-error">{{ error() }}</div>
+  }
+
+  @if (success()) {
+    <div class="alert alert-success">{{ success() }}</div>
+  }
+
+  @if (loading()) {
+    <div class="loading">Carregando conta...</div>
+  } @else if (account(); as account) {
+    <section class="account-hero">
+      <div>
+        <span class="eyebrow">Conta #{{ account.id }}</span>
+        <h1>Seja bem-vindo, {{ account.personName }}</h1>
+        <p>
+          Consulte seu saldo e realize suas movimentações.
+        </p>
+      </div>
+
+      <span class="badge badge-success">
+        {{ account.status }}
+      </span>
+    </section>
+
+    <section class="financial-summary">
+      <article>
+        <small>Saldo atual</small>
+        <strong>{{ currency(account.balance) }}</strong>
+      </article>
+
+      <article>
+        <small>Cheque especial</small>
+        <strong>
+          {{ currency(account.overdraftLimit) }}
+        </strong>
+      </article>
+
+      <article class="highlight">
+        <small>Total disponível</small>
+        <strong>
+          {{ currency(account.availableBalance) }}
+        </strong>
+      </article>
+    </section>
+
+    @if (account.balance < 0) {
+      <div class="overdraft-warning">
+        Você está utilizando
+        <strong>{{ currency(account.balance * -1) }}</strong>
+        do cheque especial.
+      </div>
+    }
+
+    <section class="operations-grid">
+      <app-transfer-form
+        [sourceAccount]="account"
+        [accounts]="accounts()"
+        (transfer)="transfer($event)"
+        (schedule)="schedule($event)"
+      />
+
+      <app-transfer-query
+        (search)="searchTransfer($event)"
+      />
+    </section>
+
+    @if (transferResult(); as transfer) {
+      <section class="transfer-result">
+        <header>
+          <div>
+            <small>Transferência</small>
+            <h2>{{ transfer.id }}</h2>
+          </div>
+
+          <span class="badge">
+            {{ transfer.status }}
+          </span>
+        </header>
+
+        <dl>
+          <div>
+            <dt>Valor</dt>
+            <dd>{{ currency(transfer.amount) }}</dd>
+          </div>
+
+          <div>
+            <dt>Origem</dt>
+            <dd>Conta #{{ transfer.sourceAccountId }}</dd>
+          </div>
+
+          <div>
+            <dt>Destino</dt>
+            <dd>Conta #{{ transfer.destinationAccountId }}</dd>
+          </div>
+
+          <div>
+            <dt>Criada em</dt>
+            <dd>{{ date(transfer.createdAt) }}</dd>
+          </div>
+
+          @if (transfer.scheduledAt) {
+            <div>
+              <dt>Agendada para</dt>
+              <dd>{{ date(transfer.scheduledAt) }}</dd>
+            </div>
+          }
+
+          @if (transfer.failureReason) {
+            <div>
+              <dt>Motivo da falha</dt>
+              <dd>{{ transfer.failureReason }}</dd>
+            </div>
+          }
+        </dl>
+
+        @if (transfer.status === 'Scheduled') {
+          <button
+            type="button"
+            class="button-danger"
+            (click)="cancelTransfer()"
+          >
+            Cancelar agendamento
+          </button>
+        }
+      </section>
+    }
+  }
+</main>

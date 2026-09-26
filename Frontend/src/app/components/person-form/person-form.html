@@ -1,0 +1,94 @@
+<div class="modal-backdrop">
+  <section class="modal">
+    <header class="modal-header">
+      <div>
+        <small>Pessoa</small>
+        <h2>
+          {{ person() ? 'Editar pessoa' : 'Nova pessoa' }}
+        </h2>
+      </div>
+
+      <button type="button" class="icon-button" (click)="close.emit()">
+        ×
+      </button>
+    </header>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="form-grid">
+        <label class="field field-full">
+          <span>Nome *</span>
+          <input formControlName="name" placeholder="Nome completo" />
+        </label>
+
+        <label class="field">
+          <span>CPF/CNPJ</span>
+          <input formControlName="document" />
+        </label>
+
+        <label class="field">
+          <span>Data de nascimento</span>
+          <input type="date" formControlName="birthDate" />
+        </label>
+
+        <label class="field">
+          <span>E-mail</span>
+          <input type="email" formControlName="email" />
+        </label>
+
+        <label class="field">
+          <span>Telefone</span>
+          <input formControlName="phone" />
+        </label>
+
+        <label class="field">
+          <span>CEP</span>
+          <input formControlName="zipCode" />
+        </label>
+
+        <label class="field">
+          <span>Logradouro</span>
+          <input formControlName="street" />
+        </label>
+
+        <label class="field">
+          <span>Número</span>
+          <input formControlName="number" />
+        </label>
+
+        <label class="field">
+          <span>Complemento</span>
+          <input formControlName="complement" />
+        </label>
+
+        <label class="field">
+          <span>Bairro</span>
+          <input formControlName="neighborhood" />
+        </label>
+
+        <label class="field">
+          <span>Cidade</span>
+          <input formControlName="city" />
+        </label>
+
+        <label class="field">
+          <span>UF</span>
+          <input
+            formControlName="state"
+            maxlength="2"
+            placeholder="GO"
+          />
+        </label>
+      </div>
+
+      <footer class="modal-actions">
+        <button type="button" class="button-secondary" (click)="close.emit()">
+          Cancelar
+        </button>
+
+        <button type="submit" class="button-primary">
+          Salvar pessoa
+        </button>
+      </footer>
+    </form>
+  </section>
+</div>

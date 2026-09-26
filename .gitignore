@@ -1,91 +1,23 @@
-# Build
-bin/
-obj/
-out/
-
-# VS Code
-.vscode/
-*.code-workspace
-
-# Visual Studio
-.vs/
+# .NET
+**/bin/
+**/obj/
 *.user
 *.suo
-*.userosscache
-*.sln.docstates
+.vs/
 
-# Rider / JetBrains
+# Angular / Node
+**/node_modules/
+**/dist/
+**/.angular/
+npm-debug.log*
+
+# IDE e sistema operacional
+.vscode/
 .idea/
-*.sln.iml
-
-# Logs
-*.log
-logs/
-
-# Arquivos temporários
-*.tmp
-*.temp
-*.bak
-*.swp
-
-# Sistema operacional
 .DS_Store
 Thumbs.db
-Desktop.ini
 
-# NuGet
-*.nupkg
-*.snupkg
-packages/
-
-# Test results
-TestResults/
-coverage/
-coverage.*
-
-# Publish
-publish/
-artifacts/
-
-# Banco local
-*.db
-*.db-shm
-*.db-wal
-*.sqlite
-*.sqlite3
-
-# Secrets / configurações locais
-appsettings.Local.json
-appsettings.*.Local.json
+# Ambiente
 .env
 .env.*
-secrets.json
-
-# Certificados
-*.pfx
-*.p12
-*.pem
-*.key
-
-# Arquivos gerados pelo Entity Framework
-# NÃO ignore a pasta Migrations.
-# Ela deve ser versionada no Git.
-
-# Swagger / documentação XML gerada
-bin/**/*.xml
-obj/**/*.xml
-
-# Node / Angular, caso backend e frontend estejam no mesmo repositório
-node_modules/
-.angular/
-dist/
-.angular/cache/
-
-# npm
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-
-# Frontend environment local
-src/environments/environment.local.ts
+!.env.example

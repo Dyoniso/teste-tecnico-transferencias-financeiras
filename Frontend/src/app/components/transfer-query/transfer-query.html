@@ -1,0 +1,22 @@
+<section class="panel">
+  <header class="panel-header">
+    <div>
+      <small>Acompanhamento</small>
+      <h2>Consultar transferência</h2>
+    </div>
+  </header>
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <label class="field">
+      <span>Identificador da transferência</span>
+      <input
+        formControlName="id"
+        placeholder="UUID da transferência"
+      />
+    </label>
+
+    <button type="submit" class="button-secondary">
+      Consultar
+    </button>
+  </form>
+</section>
