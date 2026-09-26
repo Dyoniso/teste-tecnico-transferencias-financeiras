@@ -4,9 +4,54 @@
         <name>Backend</name>
     </assembly>
     <members>
+        <member name="M:Backend.Controllers.AccountsController.GetAll(System.Threading.CancellationToken)">
+            <summary>
+            Lista todas as contas cadastradas.
+            </summary>
+        </member>
         <member name="M:Backend.Controllers.AccountsController.GetById(System.Int32,System.Threading.CancellationToken)">
             <summary>
             Consulta uma conta pelo identificador.
+            </summary>
+        </member>
+        <member name="M:Backend.Controllers.AccountsController.Create(Backend.DTOs.Requests.CreateAccountRequest,System.Threading.CancellationToken)">
+            <summary>
+            Registra uma nova conta.
+            </summary>
+        </member>
+        <member name="M:Backend.Controllers.AccountsController.Update(System.Int32,Backend.DTOs.Requests.UpdateAccountRequest,System.Threading.CancellationToken)">
+            <summary>
+            Atualiza os dados de uma conta.
+            </summary>
+        </member>
+        <member name="M:Backend.Controllers.AccountsController.Delete(System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Exclui uma conta.
+            </summary>
+        </member>
+        <member name="M:Backend.Controllers.PersonsController.GetAll(System.Threading.CancellationToken)">
+            <summary>
+            Lista todas as pessoas cadastradas.
+            </summary>
+        </member>
+        <member name="M:Backend.Controllers.PersonsController.GetById(System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Consulta uma pessoa pelo identificador.
+            </summary>
+        </member>
+        <member name="M:Backend.Controllers.PersonsController.Create(Backend.DTOs.Requests.CreatePersonRequest,System.Threading.CancellationToken)">
+            <summary>
+            Registra uma nova pessoa.
+            </summary>
+        </member>
+        <member name="M:Backend.Controllers.PersonsController.Update(System.Int32,Backend.DTOs.Requests.UpdatePersonRequest,System.Threading.CancellationToken)">
+            <summary>
+            Atualiza os dados de uma pessoa.
+            </summary>
+        </member>
+        <member name="M:Backend.Controllers.PersonsController.Delete(System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Exclui uma pessoa.
             </summary>
         </member>
         <member name="M:Backend.Controllers.TransfersController.Create(Backend.DTOs.Requests.CreateTransferRequest,System.String,System.Threading.CancellationToken)">
@@ -28,6 +73,18 @@
             <summary>
             Cancela uma transferência agendada.
             </summary>
+        </member>
+        <member name="T:Backend.Migrations.InitialCreate">
+            <inheritdoc />
+        </member>
+        <member name="M:Backend.Migrations.InitialCreate.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Backend.Migrations.InitialCreate.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Backend.Migrations.InitialCreate.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
         </member>
         <member name="T:Program">
             <summary>
