@@ -107,26 +107,35 @@ services:
 
   frontend:
     container_name: transferencias-frontend
+
     build:
       context: ./Frontend
       dockerfile: Dockerfile
+
     restart: unless-stopped
+
     expose:
       - "80"
+
     networks:
       - transferencias-network
 
   nginx:
     image: nginx:1.29-alpine
     container_name: transferencias-nginx
+
     restart: unless-stopped
+
     ports:
       - "80:80"
+
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+
     depends_on:
       - frontend
       - backend
+
     networks:
       - transferencias-network
 

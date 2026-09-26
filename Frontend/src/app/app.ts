@@ -4,22 +4,16 @@ import {
   RouterOutlet,
 } from '@angular/router';
 
+import { Toast } from './components/toast/toast';
+
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink],
-  template: `
-    <header class="app-header">
-      <a routerLink="/" class="brand">
-        <span class="brand-icon">TF</span>
-
-        <span>
-          <strong>Transferências</strong>
-          <small>Gestão financeira</small>
-        </span>
-      </a>
-    </header>
-
-    <router-outlet />
-  `,
+  imports: [
+    RouterOutlet,
+    RouterLink,
+    Toast,
+  ],
+  templateUrl: './app.html',
+  styleUrl: './app.scss',
 })
 export class App {}

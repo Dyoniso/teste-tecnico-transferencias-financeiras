@@ -4,17 +4,35 @@ import {
   OnInit,
   signal,
 } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
-import { finalize, forkJoin } from 'rxjs';
 
-import { TransferForm } from '../../components/transfer-form/transfer-form';
-import { TransferQuery } from '../../components/transfer-query/transfer-query';
+import {
+  ActivatedRoute,
+  Router,
+  RouterLink,
+} from '@angular/router';
+
+import {
+  finalize,
+} from 'rxjs';
+
+import {
+  LucideArrowLeft,
+  LucideBadgeDollarSign,
+  LucideCalendarClock,
+  LucideChevronRight,
+  LucideCircleAlert,
+  LucideCircleCheck,
+  LucideLandmark,
+  LucideRefreshCw,
+  LucideSend,
+  LucideShieldCheck,
+  LucideTrendingDown,
+  LucideWalletCards,
+  LucideX,
+} from '@lucide/angular';
 
 import {
   Account,
-  CreateTransferPayload,
-  ScheduleTransferPayload,
-  Transfer,
 } from '../../models/api.models';
 
 import {
@@ -22,143 +40,229 @@ import {
   getApiErrorMessage,
 } from '../../services/financial-api.service';
 
+import {
+  ToastService,
+} from '../../services/toast.service';
+
 @Component({
   selector: 'app-account-detail',
   imports: [
     RouterLink,
-    TransferForm,
-    TransferQuery,
+    LucideArrowLeft,
+    LucideBadgeDollarSign,
+    LucideCalendarClock,
+    LucideChevronRight,
+    LucideCircleAlert,
+    LucideCircleCheck,
+    LucideLandmark,
+    LucideRefreshCw,
+    LucideSend,
+    LucideShieldCheck,
+    LucideTrendingDown,
+    LucideWalletCards,
+    LucideX,
   ],
   templateUrl: './account-detail.html',
+  styleUrl: './account-detail.scss',
 })
 export class AccountDetail implements OnInit {
-  private readonly route = inject(ActivatedRoute);
-  private readonly api = inject(FinancialApiService);
+  private readonly route =
+    inject(ActivatedRoute);
+
+  private readonly router =
+    inject(Router);
+
+  private readonly api =
+    inject(FinancialApiService);
+
+  private readonly toast =
+    inject(ToastService);
 
   protected readonly account =
     signal<Account | null>(null);
 
-  protected readonly accounts = signal<Account[]>([]);
-  protected readonly transferResult =
-    signal<Transfer | null>(null);
-
   protected readonly loading = signal(true);
-  protected readonly error = signal<string | null>(null);
-  protected readonly success = signal<string | null>(null);
+
+  protected readonly error =
+    signal<string | null>(null);
+
+  protected readonly showOverdraft =
+    signal(false);
+
+  private accountId = 0;
 
   ngOnInit(): void {
-    this.loadAccount();
-  }
-
-  protected loadAccount(): void {
     const id = Number(
       this.route.snapshot.paramMap.get('id'),
     );
 
-    this.loading.set(true);
+    if (
+      !Number.isInteger(id) ||
+      id <= 0
+    ) {
+      this.toast.error(
+        'Conta inválida',
+        'Não foi possível identificar a conta informada.',
+      );
 
-    forkJoin({
-      account: this.api.getAccount(id),
-      accounts: this.api.listAccounts(),
-    })
-      .pipe(finalize(() => this.loading.set(false)))
+      void this.router.navigate(['/']);
+
+      return;
+    }
+
+    this.accountId = id;
+    this.loadAccount();
+  }
+
+  protected loadAccount(): void {
+    this.loading.set(true);
+    this.error.set(null);
+
+    this.api
+      .getAccount(this.accountId)
+      .pipe(
+        finalize(() => {
+          this.loading.set(false);
+        }),
+      )
       .subscribe({
-        next: ({ account, accounts }) => {
+        next: (account: Account) => {
           this.account.set(account);
-          this.accounts.set(accounts);
         },
-        error: (error) => {
-          this.error.set(getApiErrorMessage(error));
+        error: (error: unknown) => {
+          const message =
+            getApiErrorMessage(error);
+
+          this.error.set(message);
+
+          this.toast.error(
+            'Não foi possível carregar a conta',
+            message,
+          );
         },
       });
   }
 
-  protected transfer(
-    payload: CreateTransferPayload,
-  ): void {
-    this.clearMessages();
-
-    this.api.transfer(payload).subscribe({
-      next: (transfer) => {
-        this.transferResult.set(transfer);
-        this.success.set(
-          'Transferência realizada com sucesso.',
-        );
-        this.loadAccount();
-      },
-      error: (error) => {
-        this.error.set(getApiErrorMessage(error));
-      },
-    });
+  protected toggleOverdraft(): void {
+    this.showOverdraft.update(
+      (visible) => !visible,
+    );
   }
 
-  protected schedule(
-    payload: ScheduleTransferPayload,
-  ): void {
-    this.clearMessages();
-
-    this.api.scheduleTransfer(payload).subscribe({
-      next: (transfer) => {
-        this.transferResult.set(transfer);
-        this.success.set(
-          'Transferência agendada com sucesso.',
-        );
+  protected currency(
+    value: number | null | undefined,
+  ): string {
+    return new Intl.NumberFormat(
+      'pt-BR',
+      {
+        style: 'currency',
+        currency: 'BRL',
       },
-      error: (error) => {
-        this.error.set(getApiErrorMessage(error));
-      },
-    });
+    ).format(value ?? 0);
   }
 
-  protected searchTransfer(id: string): void {
-    this.clearMessages();
+  protected isActive(
+    status: string | null,
+  ): boolean {
+    const normalized =
+      status?.trim().toLowerCase();
 
-    this.api.getTransfer(id).subscribe({
-      next: (transfer) => {
-        this.transferResult.set(transfer);
-      },
-      error: (error) => {
-        this.error.set(getApiErrorMessage(error));
-      },
-    });
+    return (
+      normalized === 'active' ||
+      normalized === 'ativo' ||
+      normalized === '1'
+    );
   }
 
-  protected cancelTransfer(): void {
-    const transfer = this.transferResult();
+  protected statusLabel(
+    status: string | null,
+  ): string {
+    const normalized =
+      status?.trim().toLowerCase();
 
-    if (!transfer) return;
+    switch (normalized) {
+      case 'active':
+      case 'ativo':
+      case '1':
+        return 'Conta ativa';
 
-    this.api.cancelTransfer(transfer.id).subscribe({
-      next: (updatedTransfer) => {
-        this.transferResult.set(updatedTransfer);
-        this.success.set(
-          'Agendamento cancelado com sucesso.',
-        );
-      },
-      error: (error) => {
-        this.error.set(getApiErrorMessage(error));
-      },
-    });
+      case 'blocked':
+      case 'bloqueado':
+      case 'bloqueada':
+      case '2':
+        return 'Conta bloqueada';
+
+      case 'inactive':
+      case 'inativo':
+      case 'inativa':
+      case '3':
+        return 'Conta inativa';
+
+      default:
+        return status || 'Status não informado';
+    }
   }
 
-  protected currency(value: number): string {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    }).format(value);
+  protected statusClass(
+    status: string | null,
+  ): string {
+    const normalized =
+      status?.trim().toLowerCase();
+
+    if (
+      normalized === 'active' ||
+      normalized === 'ativo' ||
+      normalized === '1'
+    ) {
+      return 'status-active';
+    }
+
+    if (
+      normalized === 'blocked' ||
+      normalized === 'bloqueado' ||
+      normalized === 'bloqueada' ||
+      normalized === '2'
+    ) {
+      return 'status-blocked';
+    }
+
+    return 'status-inactive';
   }
 
-  protected date(value: string | null): string {
-    if (!value) return 'Não informado';
-
-    return new Intl.DateTimeFormat('pt-BR', {
-      dateStyle: 'short',
-      timeStyle: 'short',
-    }).format(new Date(value));
+  protected overdraftUsed(
+    account: Account,
+  ): number {
+    return account.balance < 0
+      ? Math.abs(account.balance)
+      : 0;
   }
 
-  private clearMessages(): void {
-    this.error.set(null);
-    this.success.set(null);
+  protected overdraftAvailable(
+    account: Account,
+  ): number {
+    return Math.max(
+      account.overdraftLimit -
+        this.overdraftUsed(account),
+      0,
+    );
+  }
+
+  protected overdraftPercentage(
+    account: Account,
+  ): number {
+    if (account.overdraftLimit <= 0) {
+      return 0;
+    }
+
+    const percentage =
+      (
+        this.overdraftUsed(account) /
+        account.overdraftLimit
+      ) * 100;
+
+    return Math.min(
+      Math.max(percentage, 0),
+      100,
+    );
   }
 }

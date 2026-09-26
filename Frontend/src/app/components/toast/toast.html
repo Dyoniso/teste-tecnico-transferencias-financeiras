@@ -1,0 +1,53 @@
+<section
+  class="toast-container"
+  aria-live="polite"
+  aria-label="Mensagens do sistema"
+>
+  @for (item of toast.items(); track item.id) {
+    <article
+      class="toast"
+      [class.toast-success]="item.type === 'success'"
+      [class.toast-error]="item.type === 'error'"
+      [class.toast-warning]="item.type === 'warning'"
+      [class.toast-info]="item.type === 'info'"
+      animate.enter="toast-enter"
+      animate.leave="toast-leave"
+    >
+      <div class="toast-icon">
+        @switch (item.type) {
+          @case ('success') {
+            <svg lucideCircleCheck></svg>
+          }
+
+          @case ('error') {
+            <svg lucideCircleX></svg>
+          }
+
+          @case ('warning') {
+            <svg lucideTriangleAlert></svg>
+          }
+
+          @default {
+            <svg lucideInfo></svg>
+          }
+        }
+      </div>
+
+      <div class="toast-content">
+        <strong>{{ item.title }}</strong>
+        <p>{{ item.message }}</p>
+      </div>
+
+      <button
+        type="button"
+        class="toast-close"
+        aria-label="Fechar mensagem"
+        (click)="toast.remove(item.id)"
+      >
+        <svg lucideX></svg>
+      </button>
+
+      <div class="toast-progress"></div>
+    </article>
+  }
+</section>

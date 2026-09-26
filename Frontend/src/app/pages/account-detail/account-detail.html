@@ -1,134 +1,455 @@
-<main class="page-container">
-  <a routerLink="/" class="back-link">
-    ← Voltar para pessoas e contas
+<main class="account-page page-shell">
+  <a
+    routerLink="/"
+    class="back-link"
+  >
+    <svg lucideArrowLeft></svg>
+    Pessoas e contas
   </a>
 
-  @if (error()) {
-    <div class="alert alert-error">{{ error() }}</div>
-  }
-
-  @if (success()) {
-    <div class="alert alert-success">{{ success() }}</div>
-  }
-
   @if (loading()) {
-    <div class="loading">Carregando conta...</div>
+    <section
+      class="account-skeleton"
+      aria-label="Carregando conta"
+    >
+      <div class="skeleton skeleton-heading"></div>
+
+      <div class="skeleton-grid">
+        <div class="skeleton skeleton-card"></div>
+        <div class="skeleton skeleton-card"></div>
+        <div class="skeleton skeleton-card"></div>
+      </div>
+    </section>
+  } @else if (error()) {
+    <section
+      class="error-state"
+      animate.enter="fade-up"
+    >
+      <div class="error-state-icon">
+        <svg lucideCircleAlert></svg>
+      </div>
+
+      <h1>Não foi possível carregar a conta</h1>
+
+      <p>{{ error() }}</p>
+
+      <div class="error-state-actions">
+        <a
+          routerLink="/"
+          class="secondary-button"
+        >
+          <svg lucideArrowLeft></svg>
+          Voltar
+        </a>
+
+        <button
+          type="button"
+          class="primary-button"
+          (click)="loadAccount()"
+        >
+          <svg lucideRefreshCw></svg>
+          Tentar novamente
+        </button>
+      </div>
+    </section>
   } @else if (account(); as account) {
-    <section class="account-hero">
+    <section
+      class="account-heading"
+      animate.enter="fade-up"
+    >
       <div>
-        <span class="eyebrow">Conta #{{ account.id }}</span>
-        <h1>Seja bem-vindo, {{ account.personName }}</h1>
+        <div class="heading-meta">
+          <span class="eyebrow">
+            Conta #{{ account.id }}
+          </span>
+
+          <span
+            class="account-status"
+            [class]="statusClass(account.status)"
+          >
+            @if (isActive(account.status)) {
+              <svg lucideCircleCheck></svg>
+            } @else {
+              <svg lucideCircleAlert></svg>
+            }
+
+            {{ statusLabel(account.status) }}
+          </span>
+        </div>
+
+        <h1>
+          Olá, {{ account.personName || 'cliente' }}
+        </h1>
+
         <p>
-          Consulte seu saldo e realize suas movimentações.
+          Consulte seu saldo e escolha o que
+          deseja fazer.
         </p>
       </div>
 
-      <span class="badge badge-success">
-        {{ account.status }}
-      </span>
+      <div class="institution-badge">
+        <svg lucideShieldCheck></svg>
+
+        <span>
+          <small>Ambiente protegido</small>
+          <strong>Operação segura</strong>
+        </span>
+      </div>
     </section>
 
-    <section class="financial-summary">
-      <article>
-        <small>Saldo atual</small>
-        <strong>{{ currency(account.balance) }}</strong>
+    <section
+      class="balance-section"
+      animate.enter="fade-up"
+    >
+      <article class="main-balance-card">
+        <div class="balance-card-top">
+          <div>
+            <span>Saldo disponível</span>
+
+            <strong>
+              {{ currency(account.availableBalance) }}
+            </strong>
+          </div>
+
+          <div class="balance-icon">
+            <svg lucideWalletCards></svg>
+          </div>
+        </div>
+
+        <div class="balance-card-footer">
+          <span>
+            Conta #{{ account.id }}
+          </span>
+
+          <span>
+            Titular:
+            {{ account.personName || 'Não informado' }}
+          </span>
+        </div>
+
+        <div class="balance-decoration"></div>
       </article>
 
-      <article>
-        <small>Cheque especial</small>
-        <strong>
-          {{ currency(account.overdraftLimit) }}
-        </strong>
-      </article>
+      <div class="financial-cards">
+        <article class="financial-card">
+          <div class="financial-card-icon">
+            <svg lucideLandmark></svg>
+          </div>
 
-      <article class="highlight">
-        <small>Total disponível</small>
-        <strong>
-          {{ currency(account.availableBalance) }}
-        </strong>
-      </article>
+          <div>
+            <span>Saldo em conta</span>
+
+            <strong
+              [class.negative-value]="
+                account.balance < 0
+              "
+            >
+              {{ currency(account.balance) }}
+            </strong>
+          </div>
+        </article>
+
+        <article class="financial-card">
+          <div class="financial-card-icon accent">
+            <svg lucideBadgeDollarSign></svg>
+          </div>
+
+          <div>
+            <span>Cheque especial</span>
+
+            <strong>
+              {{ currency(account.overdraftLimit) }}
+            </strong>
+          </div>
+        </article>
+      </div>
     </section>
 
     @if (account.balance < 0) {
-      <div class="overdraft-warning">
-        Você está utilizando
-        <strong>{{ currency(account.balance * -1) }}</strong>
-        do cheque especial.
-      </div>
-    }
+      <section
+        class="overdraft-alert"
+        animate.enter="fade-up"
+      >
+        <div class="overdraft-alert-icon">
+          <svg lucideTrendingDown></svg>
+        </div>
 
-    <section class="operations-grid">
-      <app-transfer-form
-        [sourceAccount]="account"
-        [accounts]="accounts()"
-        (transfer)="transfer($event)"
-        (schedule)="schedule($event)"
-      />
+        <div>
+          <strong>
+            Você está utilizando o cheque especial
+          </strong>
 
-      <app-transfer-query
-        (search)="searchTransfer($event)"
-      />
-    </section>
-
-    @if (transferResult(); as transfer) {
-      <section class="transfer-result">
-        <header>
-          <div>
-            <small>Transferência</small>
-            <h2>{{ transfer.id }}</h2>
-          </div>
-
-          <span class="badge">
-            {{ transfer.status }}
-          </span>
-        </header>
-
-        <dl>
-          <div>
-            <dt>Valor</dt>
-            <dd>{{ currency(transfer.amount) }}</dd>
-          </div>
-
-          <div>
-            <dt>Origem</dt>
-            <dd>Conta #{{ transfer.sourceAccountId }}</dd>
-          </div>
-
-          <div>
-            <dt>Destino</dt>
-            <dd>Conta #{{ transfer.destinationAccountId }}</dd>
-          </div>
-
-          <div>
-            <dt>Criada em</dt>
-            <dd>{{ date(transfer.createdAt) }}</dd>
-          </div>
-
-          @if (transfer.scheduledAt) {
-            <div>
-              <dt>Agendada para</dt>
-              <dd>{{ date(transfer.scheduledAt) }}</dd>
-            </div>
-          }
-
-          @if (transfer.failureReason) {
-            <div>
-              <dt>Motivo da falha</dt>
-              <dd>{{ transfer.failureReason }}</dd>
-            </div>
-          }
-        </dl>
-
-        @if (transfer.status === 'Scheduled') {
-          <button
-            type="button"
-            class="button-danger"
-            (click)="cancelTransfer()"
-          >
-            Cancelar agendamento
-          </button>
-        }
+          <p>
+            O valor utilizado atualmente é
+            {{ currency(overdraftUsed(account)) }}.
+            Valores recebidos serão usados primeiro
+            para cobrir esse saldo.
+          </p>
+        </div>
       </section>
     }
+
+    <section
+      class="section-block"
+      animate.enter="fade-up"
+    >
+      <header class="section-heading">
+        <div>
+          <span class="eyebrow">
+            Movimentações
+          </span>
+
+          <h2>O que você deseja fazer?</h2>
+        </div>
+      </header>
+
+      <div class="account-actions">
+        @if (isActive(account.status)) {
+          <a
+            class="action-card primary-action"
+            [routerLink]="[
+              '/contas',
+              account.id,
+              'transferir'
+            ]"
+          >
+            <span class="action-icon">
+              <svg lucideSend></svg>
+            </span>
+
+            <span class="action-content">
+              <strong>Transferir</strong>
+
+              <small>
+                Envie dinheiro agora para outra
+                conta
+              </small>
+            </span>
+
+            <svg
+              class="action-arrow"
+              lucideChevronRight
+            ></svg>
+          </a>
+
+          <a
+            class="action-card"
+            [routerLink]="[
+              '/contas',
+              account.id,
+              'agendar'
+            ]"
+          >
+            <span class="action-icon">
+              <svg lucideCalendarClock></svg>
+            </span>
+
+            <span class="action-content">
+              <strong>Agendar</strong>
+
+              <small>
+                Programe uma transferência para
+                outra data
+              </small>
+            </span>
+
+            <svg
+              class="action-arrow"
+              lucideChevronRight
+            ></svg>
+          </a>
+        } @else {
+          <button
+            type="button"
+            class="action-card action-disabled"
+            disabled
+          >
+            <span class="action-icon">
+              <svg lucideSend></svg>
+            </span>
+
+            <span class="action-content">
+              <strong>Transferir</strong>
+
+              <small>
+                Indisponível para esta conta
+              </small>
+            </span>
+          </button>
+
+          <button
+            type="button"
+            class="action-card action-disabled"
+            disabled
+          >
+            <span class="action-icon">
+              <svg lucideCalendarClock></svg>
+            </span>
+
+            <span class="action-content">
+              <strong>Agendar</strong>
+
+              <small>
+                Indisponível para esta conta
+              </small>
+            </span>
+          </button>
+        }
+
+        <button
+          type="button"
+          class="action-card"
+          [class.action-selected]="
+            showOverdraft()
+          "
+          (click)="toggleOverdraft()"
+        >
+          <span class="action-icon">
+            <svg lucideBadgeDollarSign></svg>
+          </span>
+
+          <span class="action-content">
+            <strong>Cheque especial</strong>
+
+            <small>
+              Consulte o limite e o valor utilizado
+            </small>
+          </span>
+
+          <svg
+            class="action-arrow"
+            lucideChevronRight
+          ></svg>
+        </button>
+      </div>
+    </section>
+
+    @if (showOverdraft()) {
+      <section
+        class="overdraft-panel"
+        animate.enter="expand-enter"
+        animate.leave="expand-leave"
+      >
+        <header class="overdraft-panel-header">
+          <div>
+            <span class="eyebrow">
+              Crédito emergencial
+            </span>
+
+            <h2>Seu cheque especial</h2>
+
+            <p>
+              O limite complementa seu saldo quando
+              necessário.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            class="icon-button"
+            aria-label="Fechar cheque especial"
+            (click)="toggleOverdraft()"
+          >
+            <svg lucideX></svg>
+          </button>
+        </header>
+
+        <div class="overdraft-values">
+          <div>
+            <span>Limite contratado</span>
+
+            <strong>
+              {{ currency(account.overdraftLimit) }}
+            </strong>
+          </div>
+
+          <div>
+            <span>Limite utilizado</span>
+
+            <strong>
+              {{ currency(overdraftUsed(account)) }}
+            </strong>
+          </div>
+
+          <div>
+            <span>Limite restante</span>
+
+            <strong>
+              {{ currency(
+                overdraftAvailable(account)
+              ) }}
+            </strong>
+          </div>
+        </div>
+
+        <div class="overdraft-progress">
+          <div class="progress-heading">
+            <span>Utilização do limite</span>
+
+            <strong>
+              {{
+                overdraftPercentage(account)
+                  .toFixed(0)
+              }}%
+            </strong>
+          </div>
+
+          <div class="progress-track">
+            <div
+              class="progress-value"
+              [style.width.%]="
+                overdraftPercentage(account)
+              "
+            ></div>
+          </div>
+        </div>
+
+        <div class="overdraft-information">
+          <svg lucideCircleAlert></svg>
+
+          <p>
+            Caso o saldo fique negativo, valores
+            recebidos serão utilizados primeiro
+            para quitar o cheque especial utilizado.
+          </p>
+        </div>
+      </section>
+    }
+
+    <section class="account-information">
+      <header class="section-heading">
+        <div>
+          <span class="eyebrow">
+            Informações
+          </span>
+
+          <h2>Detalhes da conta</h2>
+        </div>
+      </header>
+
+      <dl class="information-list">
+        <div>
+          <dt>Identificador da conta</dt>
+          <dd>#{{ account.id }}</dd>
+        </div>
+
+        <div>
+          <dt>Identificador da pessoa</dt>
+          <dd>#{{ account.personId }}</dd>
+        </div>
+
+        <div>
+          <dt>Titular</dt>
+          <dd>
+            {{ account.personName || 'Não informado' }}
+          </dd>
+        </div>
+
+        <div>
+          <dt>Status</dt>
+          <dd>{{ statusLabel(account.status) }}</dd>
+        </div>
+      </dl>
+    </section>
   }
 </main>

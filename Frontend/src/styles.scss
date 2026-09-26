@@ -312,6 +312,35 @@ a {
   color: #166534;
 }
 
+::view-transition-old(root) {
+  animation: page-out 140ms ease-in both;
+}
+
+::view-transition-new(root) {
+  animation: page-in 220ms ease-out both;
+}
+
+@keyframes page-out {
+  to {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}
+
 @media (max-width: 760px) {
   .page-heading,
   .account-hero {
@@ -327,4 +356,4 @@ a {
   .field-full {
     grid-column: auto;
   }
-}
+}   

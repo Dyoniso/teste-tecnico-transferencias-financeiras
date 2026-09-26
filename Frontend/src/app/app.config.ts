@@ -9,7 +9,12 @@ import {
 
 import {
   provideRouter,
+  withViewTransitions,
 } from '@angular/router';
+
+import {
+  provideLucideConfig,
+} from '@lucide/angular';
 
 import { routes } from './app.routes';
 
@@ -17,6 +22,14 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideHttpClient(),
-    provideRouter(routes),
+
+    provideRouter(
+      routes,
+      withViewTransitions(),
+    ),
+
+    provideLucideConfig({
+      size: 20,
+    }),
   ],
 };

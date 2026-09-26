@@ -1,0 +1,164 @@
+<main class="result-page">
+  @if (result(); as result) {
+    <section
+      class="result-card"
+      [class.result-error]="!result.success"
+      animate.enter="result-enter"
+    >
+      <div class="result-status">
+        <div class="result-status-icon">
+          @if (result.success) {
+            <svg lucideCircleCheck></svg>
+          } @else {
+            <svg lucideCircleX></svg>
+          }
+        </div>
+
+        <span class="eyebrow">
+          {{ result.success
+            ? 'Operação concluída'
+            : 'Operação não realizada'
+          }}
+        </span>
+
+        <h1>
+          @if (!result.success) {
+            Não foi possível realizar a operação
+          } @else if (
+            result.mode === 'scheduled'
+          ) {
+            Transferência agendada
+          } @else {
+            Transferência realizada
+          }
+        </h1>
+
+        <p>
+          @if (result.success) {
+            Confira abaixo os dados do comprovante.
+          } @else {
+            {{ result.errorMessage }}
+          }
+        </p>
+      </div>
+
+      @if (
+        result.success &&
+        result.transfer;
+        as transfer
+      ) {
+        <div class="receipt">
+          <header class="receipt-header">
+            <div>
+              <small>Comprovante</small>
+              <strong>
+                {{ result.mode === 'scheduled'
+                  ? 'Agendamento'
+                  : 'Transferência'
+                }}
+              </strong>
+            </div>
+
+            <span class="status-pill">
+              {{ transfer.status }}
+            </span>
+          </header>
+
+          <dl class="receipt-details">
+            <div class="receipt-value">
+              <dt>Valor</dt>
+              <dd>
+                {{ currency(transfer.amount) }}
+              </dd>
+            </div>
+
+            <div>
+              <dt>De</dt>
+              <dd>
+                {{ sourceAccount()?.personName }}
+              </dd>
+              <small>
+                Conta #{{ transfer.sourceAccountId }}
+              </small>
+            </div>
+
+            <div>
+              <dt>Para</dt>
+              <dd>
+                {{ destinationAccount()?.personName }}
+              </dd>
+              <small>
+                Conta #{{ transfer.destinationAccountId }}
+              </small>
+            </div>
+
+            <div>
+              <dt>Data da operação</dt>
+              <dd>{{ date(transfer.createdAt) }}</dd>
+            </div>
+
+            @if (transfer.scheduledAt) {
+              <div>
+                <dt>Agendada para</dt>
+                <dd>
+                  {{ date(transfer.scheduledAt) }}
+                </dd>
+              </div>
+            }
+
+            <div>
+              <dt>Identificador</dt>
+              <dd class="receipt-id">
+                {{ transfer.id }}
+              </dd>
+            </div>
+          </dl>
+
+          <footer class="receipt-security">
+            Comprovante gerado em
+            {{ date(result.generatedAt) }}
+          </footer>
+        </div>
+      }
+
+      <div class="result-actions">
+        @if (result.success) {
+          <button
+            type="button"
+            class="secondary-button"
+            (click)="printReceipt()"
+          >
+            <svg lucidePrinter></svg>
+            Imprimir comprovante
+          </button>
+
+          <a
+            class="primary-button"
+            [routerLink]="[
+              '/contas',
+              result.sourceAccountId
+            ]"
+          >
+            <svg lucideArrowLeft></svg>
+            Voltar para a conta
+          </a>
+        } @else {
+          <a
+            class="secondary-button"
+            routerLink="/"
+          >
+            <svg lucideHouse></svg>
+            Ir para o início
+          </a>
+
+          <a
+            class="primary-button"
+            [routerLink]="retryLink(result)"
+          >
+            Tentar novamente
+          </a>
+        }
+      </div>
+    </section>
+  }
+</main>
