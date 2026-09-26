@@ -7,28 +7,18 @@ namespace Backend.Services.Kafka;
 public class KafkaConsumerService :
     BackgroundService
 {
-    private readonly IServiceScopeFactory
-        _scopeFactory;
-
-    private readonly IConfiguration
-        _configuration;
-
-    private readonly ILogger<KafkaConsumerService>
-        _logger;
+    private readonly IServiceScopeFactory _scopeFactory;
+    private readonly IConfiguration _configuration;
+    private readonly ILogger<KafkaConsumerService> _logger;
 
     public KafkaConsumerService(
         IServiceScopeFactory scopeFactory,
         IConfiguration configuration,
         ILogger<KafkaConsumerService> logger)
     {
-        _scopeFactory =
-            scopeFactory;
-
-        _configuration =
-            configuration;
-
-        _logger =
-            logger;
+        _scopeFactory = scopeFactory;
+        _configuration = configuration;
+        _logger = logger;
     }
 
     protected override async Task ExecuteAsync(
@@ -41,8 +31,10 @@ public class KafkaConsumerService :
         if (string.IsNullOrWhiteSpace(
                 bootstrapServers))
         {
-            throw new InvalidOperationException(
+            _logger.LogError(
                 "Kafka:BootstrapServers não foi configurado.");
+
+            return;
         }
 
         var config =
@@ -64,22 +56,38 @@ public class KafkaConsumerService :
         using var consumer =
             new ConsumerBuilder<string, string>(
                     config)
+                .SetErrorHandler(
+                    (_, error) =>
+                    {
+                        _logger.LogWarning(
+                            "Kafka Consumer: {Reason}",
+                            error.Reason);
+                    })
                 .Build();
 
         consumer.Subscribe(
             "scheduled-transfers");
+
+        _logger.LogInformation(
+            "Kafka Consumer inscrito no tópico scheduled-transfers.");
 
         try
         {
             while (!stoppingToken
                        .IsCancellationRequested)
             {
-                var result =
-                    consumer.Consume(
-                        stoppingToken);
-
                 try
                 {
+                    var result =
+                        consumer.Consume(
+                            stoppingToken);
+
+                    if (result?.Message?.Value
+                        is null)
+                    {
+                        continue;
+                    }
+
                     var message =
                         JsonSerializer.Deserialize<
                             ScheduledTransferMessage>(
@@ -87,6 +95,9 @@ public class KafkaConsumerService :
 
                     if (message is null)
                     {
+                        _logger.LogWarning(
+                            "Mensagem Kafka inválida.");
+
                         consumer.Commit(
                             result);
 
@@ -106,34 +117,43 @@ public class KafkaConsumerService :
                             message.TransferId,
                             stoppingToken);
 
-                    /*
-                     * Commit somente depois do
-                     * processamento.
-                     */
                     consumer.Commit(
                         result);
+                }
+                catch (ConsumeException ex)
+                {
+                    _logger.LogWarning(
+                        ex,
+                        "Erro temporário ao consumir Kafka. Nova tentativa em 5 segundos.");
+
+                    await Task.Delay(
+                        TimeSpan.FromSeconds(5),
+                        stoppingToken);
+                }
+                catch (JsonException ex)
+                {
+                    _logger.LogError(
+                        ex,
+                        "Mensagem Kafka com JSON inválido.");
                 }
                 catch (Exception ex)
                 {
                     _logger.LogError(
                         ex,
-                        "Erro processando mensagem Kafka.");
+                        "Erro ao processar mensagem Kafka.");
 
-                    /*
-                     * Sem commit.
-                     *
-                     * Kafka poderá entregar
-                     * novamente.
-                     */
                     await Task.Delay(
-                        TimeSpan.FromSeconds(2),
+                        TimeSpan.FromSeconds(5),
                         stoppingToken);
                 }
             }
         }
         catch (OperationCanceledException)
+            when (stoppingToken
+                .IsCancellationRequested)
         {
-            // aplicação encerrando
+            _logger.LogInformation(
+                "Kafka Consumer finalizado.");
         }
         finally
         {

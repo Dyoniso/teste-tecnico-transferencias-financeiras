@@ -6,6 +6,11 @@ FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
 
 WORKDIR /app
 
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        libgssapi-krb5-2 \
+    && rm -rf /var/lib/apt/lists/*
+
 EXPOSE 8080
 
 ENV ASPNETCORE_URLS=http://+:8080
@@ -27,7 +32,8 @@ RUN dotnet restore "Backend.csproj"
 
 COPY . .
 
-RUN dotnet build "Backend.csproj" \
+RUN dotnet build \
+    "Backend.csproj" \
     -c $BUILD_CONFIGURATION \
     -o /app/build
 
@@ -40,7 +46,8 @@ FROM build AS publish
 
 ARG BUILD_CONFIGURATION=Release
 
-RUN dotnet publish "Backend.csproj" \
+RUN dotnet publish \
+    "Backend.csproj" \
     -c $BUILD_CONFIGURATION \
     -o /app/publish \
     /p:UseAppHost=false
@@ -54,6 +61,7 @@ FROM base AS final
 
 WORKDIR /app
 
-COPY --from=publish /app/publish .
+COPY --from=publish \
+    /app/publish .
 
-ENTRYPOINT ["dotnet", "Backend.dll"]
+ENTRYPOINT [ "dotnet", "Backend.dll" ]
