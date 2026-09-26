@@ -6,44 +6,45 @@ using Microsoft.AspNetCore.Mvc;
 namespace Backend.Controllers;
 
 [ApiController]
-[Route("api/accounts")]
-public class AccountsController :
+[Route("api/persons")]
+public class PersonsController :
     ControllerBase
 {
-    private readonly IAccountService
-        _accountService;
+    private readonly IPersonService
+        _personService;
 
-    public AccountsController(
-        IAccountService accountService)
+    public PersonsController(
+        IPersonService personService)
     {
-        _accountService =
-            accountService;
+        _personService =
+            personService;
     }
 
     /// <summary>
-    /// Lista todas as contas cadastradas.
+    /// Lista todas as pessoas cadastradas.
     /// </summary>
     [HttpGet]
     [ProducesResponseType(
-        typeof(List<AccountResponse>),
+        typeof(List<PersonResponse>),
         StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAll(
         CancellationToken cancellationToken)
     {
-        var accounts =
-            await _accountService
+        var persons =
+            await _personService
                 .GetAllAsync(
                     cancellationToken);
 
-        return Ok(accounts);
+        return Ok(
+            persons);
     }
 
     /// <summary>
-    /// Consulta uma conta pelo identificador.
+    /// Consulta uma pessoa pelo identificador.
     /// </summary>
     [HttpGet("{id:int}")]
     [ProducesResponseType(
-        typeof(AccountResponse),
+        typeof(PersonResponse),
         StatusCodes.Status200OK)]
     [ProducesResponseType(
         StatusCodes.Status404NotFound)]
@@ -51,33 +52,32 @@ public class AccountsController :
         int id,
         CancellationToken cancellationToken)
     {
-        var account =
-            await _accountService
+        var person =
+            await _personService
                 .GetByIdAsync(
                     id,
                     cancellationToken);
 
-        return Ok(account);
+        return Ok(
+            person);
     }
 
     /// <summary>
-    /// Registra uma nova conta.
+    /// Registra uma nova pessoa.
     /// </summary>
     [HttpPost]
     [ProducesResponseType(
-        typeof(AccountResponse),
+        typeof(PersonResponse),
         StatusCodes.Status201Created)]
     [ProducesResponseType(
         StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(
-        StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Create(
         [FromBody]
-        CreateAccountRequest request,
+        CreatePersonRequest request,
         CancellationToken cancellationToken)
     {
-        var account =
-            await _accountService
+        var person =
+            await _personService
                 .CreateAsync(
                     request,
                     cancellationToken);
@@ -86,17 +86,17 @@ public class AccountsController :
             nameof(GetById),
             new
             {
-                id = account.Id
+                id = person.Id
             },
-            account);
+            person);
     }
 
     /// <summary>
-    /// Atualiza os dados de uma conta.
+    /// Atualiza os dados de uma pessoa.
     /// </summary>
     [HttpPut("{id:int}")]
     [ProducesResponseType(
-        typeof(AccountResponse),
+        typeof(PersonResponse),
         StatusCodes.Status200OK)]
     [ProducesResponseType(
         StatusCodes.Status400BadRequest)]
@@ -105,21 +105,22 @@ public class AccountsController :
     public async Task<IActionResult> Update(
         int id,
         [FromBody]
-        UpdateAccountRequest request,
+        UpdatePersonRequest request,
         CancellationToken cancellationToken)
     {
-        var account =
-            await _accountService
+        var person =
+            await _personService
                 .UpdateAsync(
                     id,
                     request,
                     cancellationToken);
 
-        return Ok(account);
+        return Ok(
+            person);
     }
 
     /// <summary>
-    /// Exclui uma conta.
+    /// Exclui uma pessoa.
     /// </summary>
     [HttpDelete("{id:int}")]
     [ProducesResponseType(
@@ -132,7 +133,7 @@ public class AccountsController :
         int id,
         CancellationToken cancellationToken)
     {
-        await _accountService
+        await _personService
             .DeleteAsync(
                 id,
                 cancellationToken);

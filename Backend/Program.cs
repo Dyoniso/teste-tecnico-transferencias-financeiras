@@ -45,6 +45,10 @@ builder.Services.AddScoped<
     IOutboxRepository,
     OutboxRepository>();
 
+builder.Services.AddScoped<
+    IPersonRepository,
+    PersonRepository>();
+
 /*
  * Services
  */
@@ -59,6 +63,10 @@ builder.Services.AddScoped<
 builder.Services.AddScoped<
     ITransferLimitService,
     TransferLimitService>();
+
+builder.Services.AddScoped<
+    IPersonService,
+    PersonService>();
 
 /*
  * Kafka

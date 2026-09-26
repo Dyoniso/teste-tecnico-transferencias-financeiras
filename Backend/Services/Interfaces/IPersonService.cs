@@ -3,22 +3,22 @@ using Backend.DTOs.Responses;
 
 namespace Backend.Services.Interfaces;
 
-public interface IAccountService
+public interface IPersonService
 {
-    Task<List<AccountResponse>> GetAllAsync(
+    Task<List<PersonResponse>> GetAllAsync(
         CancellationToken cancellationToken = default);
 
-    Task<AccountResponse> GetByIdAsync(
+    Task<PersonResponse> GetByIdAsync(
         int id,
         CancellationToken cancellationToken = default);
 
-    Task<AccountResponse> CreateAsync(
-        CreateAccountRequest request,
+    Task<PersonResponse> CreateAsync(
+        CreatePersonRequest request,
         CancellationToken cancellationToken = default);
 
-    Task<AccountResponse> UpdateAsync(
+    Task<PersonResponse> UpdateAsync(
         int id,
-        UpdateAccountRequest request,
+        UpdatePersonRequest request,
         CancellationToken cancellationToken = default);
 
     Task DeleteAsync(

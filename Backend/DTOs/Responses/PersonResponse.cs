@@ -1,10 +1,11 @@
-namespace Backend.Models;
+namespace Backend.DTOs.Responses;
 
-public class Person
+public class PersonResponse
 {
     public int Id { get; set; }
 
-    public string Name { get; set; } = string.Empty;
+    public string Name { get; set; } =
+        string.Empty;
 
     public string? Document { get; set; }
 
@@ -28,7 +29,5 @@ public class Person
 
     public string? State { get; set; }
 
-    public Account? Account { get; set; }
-
-    public TransferLimit? TransferLimit { get; set; }
+    public int? AccountId { get; set; }
 }
