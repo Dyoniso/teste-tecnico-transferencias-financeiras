@@ -29,6 +29,7 @@
             class="button-primary"
             (click)="createAccount.emit(person)"
           >
+            <svg lucideUserPlus></svg>
             Criar conta
           </button>
         }
@@ -38,6 +39,7 @@
           class="button-secondary"
           (click)="edit.emit(person)"
         >
+          <svg lucidePencil></svg>
           Editar
         </button>
 
@@ -46,12 +48,14 @@
           class="button-danger"
           (click)="remove.emit(person)"
         >
+          <svg lucideTrash2></svg>
           Excluir
         </button>
       </footer>
     </article>
   } @empty {
     <div class="empty-state">
+      <svg lucideUserPlus></svg>
       <h3>Nenhuma pessoa cadastrada</h3>
       <p>Cadastre a primeira pessoa para começar.</p>
     </div>

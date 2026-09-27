@@ -18,24 +18,13 @@
           : openAccount()
       "
     >
+      <svg lucidePlus></svg>
       {{ activeTab() === 'persons'
-        ? '+ Nova pessoa'
-        : '+ Nova conta'
+        ? 'Nova pessoa'
+        : 'Nova conta'
       }}
     </button>
   </section>
-
-  @if (error()) {
-    <div class="alert alert-error">
-      {{ error() }}
-    </div>
-  }
-
-  @if (success()) {
-    <div class="alert alert-success">
-      {{ success() }}
-    </div>
-  }
 
   <nav class="tabs">
     <button
@@ -43,6 +32,7 @@
       [class.active]="activeTab() === 'persons'"
       (click)="activeTab.set('persons')"
     >
+      <svg lucideUsers></svg>
       Pessoas
       <span>{{ persons().length }}</span>
     </button>
@@ -52,13 +42,14 @@
       [class.active]="activeTab() === 'accounts'"
       (click)="activeTab.set('accounts')"
     >
+      <svg lucideWalletCards></svg>
       Contas
       <span>{{ accounts().length }}</span>
     </button>
   </nav>
 
   @if (loading()) {
-    <div class="loading">Carregando informações...</div>
+    <div class="page-loading">Carregando informações...</div>
   } @else if (activeTab() === 'persons') {
     <app-person-list
       [persons]="persons()"

@@ -10,6 +10,10 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import {
+  LucideSave,
+  LucideX,
+} from '@lucide/angular';
 
 import {
   Person,
@@ -18,7 +22,11 @@ import {
 
 @Component({
   selector: 'app-person-form',
-  imports: [ReactiveFormsModule],
+  imports: [
+    ReactiveFormsModule,
+    LucideSave,
+    LucideX,
+  ],
   templateUrl: './person-form.html',
 })
 export class PersonForm {

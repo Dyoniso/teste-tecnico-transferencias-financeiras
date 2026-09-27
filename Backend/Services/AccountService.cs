@@ -17,12 +17,17 @@ public class AccountService :
     private readonly IAccountRepository
         _accountRepository;
 
+    private readonly IConfiguration
+        _configuration;
+
     public AccountService(
         AppDbContext context,
-        IAccountRepository accountRepository)
+        IAccountRepository accountRepository,
+        IConfiguration configuration)
     {
         _context = context;
         _accountRepository = accountRepository;
+        _configuration = configuration;
     }
 
     public async Task<List<AccountResponse>>
@@ -104,6 +109,10 @@ public class AccountService :
                 "O limite de cheque especial não pode ser negativo.");
         }
 
+        await EnsureTransferLimitAsync(
+            request.PersonId,
+            cancellationToken);
+
         var account =
             new Account
             {
@@ -166,11 +175,46 @@ public class AccountService :
                 "O limite de cheque especial não pode ser negativo.");
         }
 
+        var person =
+            await _context.Persons
+                .FirstOrDefaultAsync(
+                    x => x.Id == request.PersonId,
+                    cancellationToken);
+
+        if (person is null)
+        {
+            throw new NotFoundException(
+                "Pessoa não encontrada.");
+        }
+
+        var existingAccount =
+            await _accountRepository
+                .GetByPersonIdAsync(
+                    request.PersonId,
+                    cancellationToken);
+
+        if (existingAccount is not null &&
+            existingAccount.Id != id)
+        {
+            throw new BusinessException(
+                "Esta pessoa já possui uma conta cadastrada.");
+        }
+
+        account.PersonId =
+            request.PersonId;
+
+        account.Person =
+            person;
+
         account.OverdraftLimit =
             request.OverdraftLimit;
 
         account.Status =
             request.Status;
+
+        await EnsureTransferLimitAsync(
+            request.PersonId,
+            cancellationToken);
 
         try
         {
@@ -202,29 +246,66 @@ public class AccountService :
                 "Conta não encontrada.");
         }
 
-        /*
-         * Como transferências possuem FK para Account,
-         * é melhor impedir exclusão se já houver histórico.
-         */
-        var hasTransfers =
-            await _context.Transfers
-                .AnyAsync(
-                    x =>
-                        x.SourceAccountId == id ||
-                        x.DestinationAccountId == id,
+        await using var transaction =
+            await _context.Database
+                .BeginTransactionAsync(
                     cancellationToken);
 
-        if (hasTransfers)
-        {
-            throw new BusinessException(
-                "A conta não pode ser excluída porque possui transferências vinculadas.");
-        }
+        await AccountDeletionHelper
+            .DeleteDependenciesAsync(
+                _context,
+                [id],
+                cancellationToken);
 
         _accountRepository.Remove(
             account);
 
         await _context.SaveChangesAsync(
             cancellationToken);
+
+        await transaction.CommitAsync(
+            cancellationToken);
+    }
+
+    private async Task EnsureTransferLimitAsync(
+        int personId,
+        CancellationToken cancellationToken)
+    {
+        var hasTransferLimit =
+            _context.TransferLimits
+                .Local
+                .Any(x => x.PersonId == personId) ||
+            await _context.TransferLimits
+                .AnyAsync(
+                    x => x.PersonId == personId,
+                    cancellationToken);
+
+        if (hasTransferLimit)
+        {
+            return;
+        }
+
+        _context.TransferLimits.Add(
+            new TransferLimit
+            {
+                PersonId = personId,
+                DayHourlyAmountLimit =
+                    _configuration.GetValue(
+                        "TransferRules:DefaultDayHourlyAmountLimit",
+                        10000m),
+                DayHourlyAttemptLimit =
+                    _configuration.GetValue(
+                        "TransferRules:DefaultDayHourlyAttemptLimit",
+                        10),
+                NightHourlyAmountLimit =
+                    _configuration.GetValue(
+                        "TransferRules:DefaultNightHourlyAmountLimit",
+                        1000m),
+                NightHourlyAttemptLimit =
+                    _configuration.GetValue(
+                        "TransferRules:DefaultNightHourlyAttemptLimit",
+                        3)
+            });
     }
 
     private static AccountResponse Map(

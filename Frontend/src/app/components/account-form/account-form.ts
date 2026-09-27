@@ -10,6 +10,10 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import {
+  LucideSave,
+  LucideX,
+} from '@lucide/angular';
 
 import {
   Account,
@@ -26,7 +30,11 @@ export interface AccountFormResult {
 
 @Component({
   selector: 'app-account-form',
-  imports: [ReactiveFormsModule],
+  imports: [
+    ReactiveFormsModule,
+    LucideSave,
+    LucideX,
+  ],
   templateUrl: './account-form.html',
 })
 export class AccountForm {
@@ -64,7 +72,7 @@ export class AccountForm {
           status: this.statusValue(account.status),
         });
 
-        this.form.controls.personId.disable();
+        this.form.controls.personId.enable();
         this.form.controls.balance.disable();
         return;
       }
@@ -92,6 +100,7 @@ export class AccountForm {
     if (this.account()) {
       this.save.emit({
         update: {
+          personId: value.personId,
           overdraftLimit: value.overdraftLimit,
           status: value.status,
         },

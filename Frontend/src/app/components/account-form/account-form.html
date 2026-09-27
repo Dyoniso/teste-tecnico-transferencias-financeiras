@@ -8,8 +8,13 @@
         </h2>
       </div>
 
-      <button type="button" class="icon-button" (click)="close.emit()">
-        ×
+      <button
+        type="button"
+        class="icon-button"
+        aria-label="Fechar formulário"
+        (click)="close.emit()"
+      >
+        <svg lucideX></svg>
       </button>
     </header>
 
@@ -66,6 +71,7 @@
         </button>
 
         <button type="submit" class="button-primary">
+          <svg lucideSave></svg>
           Salvar conta
         </button>
       </footer>

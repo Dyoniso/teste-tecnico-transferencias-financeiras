@@ -331,36 +331,30 @@ public class PersonService :
                 "Pessoa não encontrada.");
         }
 
-        /*
-         * Pessoa com conta não pode ser
-         * removida diretamente.
-         */
-        if (person.Account is not null)
-        {
-            throw new BusinessException(
-                "A pessoa não pode ser excluída porque possui uma conta vinculada.");
-        }
-
-        /*
-         * Também verifica limite de transferência,
-         * caso exista uma configuração associada.
-         */
-        var hasTransferLimit =
-            await _context.TransferLimits
-                .AnyAsync(
-                    x => x.PersonId == id,
+        await using var transaction =
+            await _context.Database
+                .BeginTransactionAsync(
                     cancellationToken);
 
-        if (hasTransferLimit)
+        if (person.Account is not null)
         {
-            throw new BusinessException(
-                "A pessoa não pode ser excluída porque possui limites de transferência configurados.");
+            await AccountDeletionHelper
+                .DeleteDependenciesAsync(
+                    _context,
+                    [person.Account.Id],
+                    cancellationToken);
+
+            _context.Accounts.Remove(
+                person.Account);
         }
 
         _personRepository.Remove(
             person);
 
         await _context.SaveChangesAsync(
+            cancellationToken);
+
+        await transaction.CommitAsync(
             cancellationToken);
     }
 

@@ -8,10 +8,14 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { LucideSearch } from '@lucide/angular';
 
 @Component({
   selector: 'app-transfer-query',
-  imports: [ReactiveFormsModule],
+  imports: [
+    ReactiveFormsModule,
+    LucideSearch,
+  ],
   templateUrl: './transfer-query.html',
 })
 export class TransferQuery {

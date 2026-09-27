@@ -4,12 +4,24 @@ import {
   output,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import {
+  LucideEye,
+  LucidePencil,
+  LucideTrash2,
+  LucideWalletCards,
+} from '@lucide/angular';
 
 import { Account } from '../../models/api.models';
 
 @Component({
   selector: 'app-account-list',
-  imports: [RouterLink],
+  imports: [
+    RouterLink,
+    LucideEye,
+    LucidePencil,
+    LucideTrash2,
+    LucideWalletCards,
+  ],
   templateUrl: './account-list.html',
 })
 export class AccountList {

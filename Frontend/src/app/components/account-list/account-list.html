@@ -38,6 +38,7 @@
           class="button-primary"
           [routerLink]="['/contas', account.id]"
         >
+          <svg lucideEye></svg>
           Visualizar
         </a>
 
@@ -46,6 +47,7 @@
           class="button-secondary"
           (click)="edit.emit(account)"
         >
+          <svg lucidePencil></svg>
           Editar
         </button>
 
@@ -54,12 +56,14 @@
           class="button-danger"
           (click)="remove.emit(account)"
         >
+          <svg lucideTrash2></svg>
           Excluir
         </button>
       </footer>
     </article>
   } @empty {
     <div class="empty-state">
+      <svg lucideWalletCards></svg>
       <h3>Nenhuma conta cadastrada</h3>
       <p>Crie uma conta e atribua a uma pessoa.</p>
     </div>

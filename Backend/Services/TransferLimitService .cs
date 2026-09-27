@@ -1,6 +1,7 @@
 using Backend.Middlewares;
 using Backend.Repositories.Interfaces;
 using Backend.Services.Interfaces;
+using System.Globalization;
 
 namespace Backend.Services;
 
@@ -121,8 +122,14 @@ public class TransferLimitService :
         if (transferredAmount + amount >
             maximumAmount)
         {
+            var formattedMaximumAmount =
+                maximumAmount.ToString(
+                    "C",
+                    CultureInfo.GetCultureInfo(
+                        "pt-BR"));
+
             throw new BusinessException(
-                $"Limite de transferência por hora excedido. Limite atual: {maximumAmount:C}.",
+                $"Limite de transferência por hora excedido. Limite atual: {formattedMaximumAmount}.",
                 StatusCodes.Status429TooManyRequests);
         }
     }

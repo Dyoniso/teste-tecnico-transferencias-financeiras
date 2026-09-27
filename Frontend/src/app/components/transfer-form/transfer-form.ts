@@ -9,6 +9,10 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import {
+  LucideCalendarClock,
+  LucideSend,
+} from '@lucide/angular';
 
 import {
   Account,
@@ -18,7 +22,11 @@ import {
 
 @Component({
   selector: 'app-transfer-form',
-  imports: [ReactiveFormsModule],
+  imports: [
+    ReactiveFormsModule,
+    LucideCalendarClock,
+    LucideSend,
+  ],
   templateUrl: './transfer-form.html',
 })
 export class TransferForm {

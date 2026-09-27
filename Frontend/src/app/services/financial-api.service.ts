@@ -117,8 +117,8 @@ export class FinancialApiService {
   }
 
   /**
-   * Atualiza o limite de cheque especial
-   * e o status da conta.
+  * Atualiza a pessoa vinculada, o limite de cheque
+  * especial e o status da conta.
    */
   updateAccount(
     id: number,
@@ -213,6 +213,13 @@ export function getApiErrorMessage(
   }
 
   if (isProblemDetails(response)) {
+    if (
+      typeof response.message === 'string' &&
+      response.message.trim()
+    ) {
+      return response.message.trim();
+    }
+
     const validationMessage =
       getFirstValidationMessage(response.errors);
 
@@ -224,14 +231,14 @@ export function getApiErrorMessage(
       typeof response.detail === 'string' &&
       response.detail.trim()
     ) {
-      return response.detail;
+      return response.detail.trim();
     }
 
     if (
       typeof response.title === 'string' &&
       response.title.trim()
     ) {
-      return response.title;
+      return response.title.trim();
     }
   }
 

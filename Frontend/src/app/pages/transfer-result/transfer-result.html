@@ -23,7 +23,7 @@
 
         <h1>
           @if (!result.success) {
-            Não foi possível realizar a operação
+            {{ result.errorMessage || 'Não foi possível realizar a operação' }}
           } @else if (
             result.mode === 'scheduled'
           ) {
@@ -37,7 +37,7 @@
           @if (result.success) {
             Confira abaixo os dados do comprovante.
           } @else {
-            {{ result.errorMessage }}
+            Revise os dados e tente novamente.
           }
         </p>
       </div>
@@ -99,7 +99,10 @@
 
             @if (transfer.scheduledAt) {
               <div>
-                <dt>Agendada para</dt>
+                <dt class="detail-with-icon">
+                  <svg lucideCalendarClock></svg>
+                  Agendada para
+                </dt>
                 <dd>
                   {{ date(transfer.scheduledAt) }}
                 </dd>
@@ -155,6 +158,7 @@
             class="primary-button"
             [routerLink]="retryLink(result)"
           >
+            <svg lucideRotateCcw></svg>
             Tentar novamente
           </a>
         }

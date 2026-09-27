@@ -19,9 +19,9 @@ import {
   LucideCalendarClock,
   LucideCircleCheck,
   LucideCircleX,
-  LucideDownload,
   LucideHouse,
   LucidePrinter,
+  LucideRotateCcw,
 } from '@lucide/angular';
 
 import {
@@ -50,9 +50,9 @@ import {
     LucideCalendarClock,
     LucideCircleCheck,
     LucideCircleX,
-    LucideDownload,
     LucideHouse,
     LucidePrinter,
+    LucideRotateCcw,
   ],
   templateUrl: './transfer-result.html',
   styleUrl: './transfer-result.scss',

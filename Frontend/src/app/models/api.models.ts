@@ -44,6 +44,7 @@ export interface CreateAccountPayload {
 }
 
 export interface UpdateAccountPayload {
+  personId: number;
   overdraftLimit: number;
   status: AccountStatus;
 }
@@ -83,7 +84,9 @@ export interface ProblemDetails {
   type?: string | null;
   title?: string | null;
   status?: number | null;
+  statusCode?: number | null;
   detail?: string | null;
+  message?: string | null;
   instance?: string | null;
   errors?: Record<string, string[]>;
 }
