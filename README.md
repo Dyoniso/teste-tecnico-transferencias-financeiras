@@ -1,6 +1,55 @@
+Claro. Reorganizei para que a execução fique logo no topo, facilitando para quem está avaliando o projeto.
+
 # Transferências Financeiras
 
 Aplicação para gerenciamento de pessoas, contas bancárias e transferências financeiras, permitindo consultar saldos e realizar transferências imediatas ou agendadas.
+
+## Executando o projeto
+
+É necessário possuir **Docker Desktop** com o **Docker Compose** instalado e em execução.
+
+Na pasta raiz do projeto, execute:
+
+```bash
+docker compose up -d --build
+```
+
+Para verificar se os serviços foram inicializados corretamente:
+
+```bash
+docker compose ps
+```
+
+Após a inicialização, acesse:
+
+- **Aplicação Web:** http://localhost/
+- **Documentação da API - Swagger:** http://localhost/swagger/
+
+O **Kafka UI** também está disponível em:
+
+```text
+http://localhost/kafka-ui/
+```
+
+Ele pode ser utilizado como ferramenta auxiliar para inspeção dos tópicos, consumidores e mensagens processadas pelo Kafka.
+
+## Utilizando a aplicação
+
+A principal forma de utilização do sistema é através da interface web:
+
+```text
+http://localhost/
+```
+
+A aplicação permite acessar as funcionalidades de cadastro de pessoas e contas, consultar informações financeiras e realizar ou agendar transferências.
+
+Para consultar todos os endpoints disponíveis, parâmetros, contratos de entrada e saída e códigos HTTP, utilize a documentação interativa do Swagger:
+
+```text
+http://localhost/swagger/
+```
+
+O Swagger também permite executar requisições diretamente contra a API durante testes e validações.
 
 ## Tecnologias e arquitetura
 
@@ -10,7 +59,7 @@ A solução é composta por frontend, backend, banco de dados e processamento as
 
 O backend foi desenvolvido em **ASP.NET Core 10**, seguindo uma organização baseada em **MVC** e separação de responsabilidades entre as principais camadas da aplicação.
 
-A estrutura utiliza conceitos de:
+A estrutura utiliza:
 
 - **MVC**, para organização dos endpoints e fluxo das requisições.
 - **SOLID**, buscando reduzir acoplamento e facilitar manutenção, evolução e testes.
@@ -94,53 +143,6 @@ A aplicação utiliza:
 - Documentação interativa da API utilizando **Swagger**.
 - Ambiente containerizado utilizando **Docker Compose**.
 
-## Executando o projeto
-
-É necessário possuir **Docker Desktop** com o **Docker Compose** instalado e em execução.
-
-Na pasta raiz do projeto, execute:
-
-```bash
-docker compose up -d --build
-```
-
-Para verificar se os serviços foram inicializados corretamente:
-
-```bash
-docker compose ps
-```
-
-Após a inicialização, os principais pontos de acesso são:
-
-- **Aplicação Web:** http://localhost/
-- **Documentação da API - Swagger:** http://localhost/swagger/
-
-O **Kafka UI** também está disponível em:
-
-```text
-http://localhost/kafka-ui/
-```
-
-Ele pode ser utilizado como ferramenta auxiliar para inspeção dos tópicos, consumidores e mensagens processadas pelo Kafka.
-
-## Utilizando a aplicação
-
-A principal forma de utilização do sistema é através da interface web:
-
-```text
-http://localhost/
-```
-
-A aplicação permite acessar as funcionalidades de cadastro de pessoas e contas, consultar informações financeiras e realizar ou agendar transferências.
-
-Para consultar todos os endpoints disponíveis, parâmetros, contratos de entrada e saída e códigos HTTP, utilize a documentação interativa do Swagger:
-
-```text
-http://localhost/swagger/
-```
-
-O Swagger também permite executar requisições diretamente contra a API durante testes e validações.
-
 ## Encerrando a aplicação
 
 Para interromper os containers:
@@ -160,3 +162,5 @@ Caso também seja necessário remover os dados persistidos localmente:
 ```bash
 docker compose down -v
 ```
+
+Assim, quem abrir o README consegue rodar e testar o projeto antes mesmo de entrar nos detalhes de arquitetura.
