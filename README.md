@@ -4,6 +4,26 @@ Aplicação para gerenciamento de pessoas, contas bancárias e transferências f
 
 <img width="1241" height="377" alt="image" src="https://github.com/user-attachments/assets/9aa27f58-8d27-4f00-afb3-e408ebc6a205" />
 
+## Materiais de apoio
+
+### 1. Anexo do teste técnico
+
+Documento original com os requisitos propostos para o desenvolvimento da aplicação:
+
+[Visualizar PDF do teste técnico](https://github.com/Dyoniso/teste-tecnico-transferencias-financeiras/blob/master/Teste_Tecnico-Desenvolvedor-Btsa.pdf)
+
+### 2. Vídeo de apresentação — Parte 1
+
+Apresentação da aplicação, navegação pelo frontend e explicação das principais regras de negócio implementadas.
+
+[Assistir no YouTube](https://www.youtube.com/watch?v=lo4hhrCiWyY)
+
+### 3. Vídeo técnico — Parte 2
+
+Explicação do backend, arquitetura utilizada, infraestrutura, Docker, deploy e decisões técnicas adotadas no projeto.
+
+[Assistir no YouTube](https://www.youtube.com/watch?v=G9bUs97aoBo)
+
 ## Executando o projeto
 
 É necessário possuir **Docker Desktop** com o **Docker Compose** instalado e em execução.
