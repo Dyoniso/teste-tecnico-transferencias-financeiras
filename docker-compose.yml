@@ -79,6 +79,23 @@ services:
     networks:
       - transferencias-network
 
+  kafka-ui:
+    image: ghcr.io/kafbat/kafka-ui:latest
+    container_name: transferencias-kafka-ui
+    restart: unless-stopped
+    expose:
+      - "8080"
+    environment:
+      DYNAMIC_CONFIG_ENABLED: "true"
+      KAFKA_CLUSTERS_0_NAME: transferencias
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+      SERVER_SERVLET_CONTEXT_PATH: /kafka-ui
+    depends_on:
+      kafka:
+        condition: service_healthy
+    networks:
+      - transferencias-network
+
   backend:
     container_name: transferencias-backend
     build:
@@ -135,6 +152,7 @@ services:
     depends_on:
       - frontend
       - backend
+      - kafka-ui
 
     networks:
       - transferencias-network

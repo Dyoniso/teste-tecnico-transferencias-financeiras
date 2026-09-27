@@ -71,6 +71,8 @@ export interface Transfer {
   id: string;
   sourceAccountId: number;
   destinationAccountId: number;
+  sourceAccountName: string | null;
+  destinationAccountName: string | null;
   amount: number;
   status: TransferStatus | string | null;
   createdAt: string;

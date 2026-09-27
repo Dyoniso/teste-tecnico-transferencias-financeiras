@@ -82,18 +82,8 @@
         </h1>
 
         <p>
-          Consulte seu saldo e escolha o que
-          deseja fazer.
+          Saldo, limites e movimentações da conta.
         </p>
-      </div>
-
-      <div class="institution-badge">
-        <svg lucideShieldCheck></svg>
-
-        <span>
-          <small>Ambiente protegido</small>
-          <strong>Operação segura</strong>
-        </span>
       </div>
     </section>
 
@@ -221,8 +211,7 @@
               <strong>Transferir</strong>
 
               <small>
-                Envie dinheiro agora para outra
-                conta
+                Transferência imediata
               </small>
             </span>
 
@@ -248,8 +237,7 @@
               <strong>Agendar</strong>
 
               <small>
-                Programe uma transferência para
-                outra data
+                Transferência para outra data
               </small>
             </span>
 
@@ -312,7 +300,7 @@
             <strong>Cheque especial</strong>
 
             <small>
-              Consulte o limite e o valor utilizado
+              Limite e valor utilizado
             </small>
           </span>
 
@@ -416,40 +404,80 @@
       </section>
     }
 
-    <section class="account-information">
+    <section class="history-section">
       <header class="section-heading">
         <div>
           <span class="eyebrow">
-            Informações
+            Movimentações
           </span>
 
-          <h2>Detalhes da conta</h2>
+          <h2>Histórico de transferências</h2>
         </div>
       </header>
 
-      <dl class="information-list">
-        <div>
-          <dt>Identificador da conta</dt>
-          <dd>#{{ account.id }}</dd>
-        </div>
+      @if (transfers().length === 0) {
+        <p class="history-empty">
+          Nenhuma transferência encontrada.
+        </p>
+      } @else {
+        <div class="history-table-wrapper">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th scope="col">Data</th>
+                <th scope="col">Tipo</th>
+                <th scope="col">Outra conta</th>
+                <th scope="col">Status</th>
+                <th scope="col">Valor</th>
+              </tr>
+            </thead>
 
-        <div>
-          <dt>Identificador da pessoa</dt>
-          <dd>#{{ account.personId }}</dd>
-        </div>
+            <tbody>
+              @for (
+                transfer of transfers();
+                track transfer.id
+              ) {
+                <tr>
+                  <td>{{ transferDate(transfer) }}</td>
+                  <td>
+                    <span>{{ transferType(transfer) }}</span>
 
-        <div>
-          <dt>Titular</dt>
-          <dd>
-            {{ account.personName || 'Não informado' }}
-          </dd>
+                    @if (scheduledDate(transfer); as date) {
+                      <small class="scheduled-date">
+                        Agendado para {{ date }}
+                      </small>
+                    }
+                  </td>
+                  <td>
+                    {{ relatedAccountName(transfer) }}
+                  </td>
+                  <td>
+                    <span
+                      class="transfer-status"
+                      [class]="transferStatusClass(
+                        transfer.status
+                      )"
+                    >
+                      {{ transferStatusLabel(
+                        transfer.status
+                      ) }}
+                    </span>
+                  </td>
+                  <td
+                    class="transfer-amount"
+                    [class.incoming]="
+                      isIncoming(transfer)
+                    "
+                  >
+                    {{ isIncoming(transfer) ? '+' : '-' }}
+                    {{ currency(transfer.amount) }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
         </div>
-
-        <div>
-          <dt>Status</dt>
-          <dd>{{ statusLabel(account.status) }}</dd>
-        </div>
-      </dl>
+      }
     </section>
   }
 </main>

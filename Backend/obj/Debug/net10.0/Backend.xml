@@ -54,6 +54,11 @@
             Exclui uma pessoa.
             </summary>
         </member>
+        <member name="M:Backend.Controllers.TransferHistoryController.GetByAccountId(System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Lista transferências enviadas, recebidas e agendadas de uma conta.
+            </summary>
+        </member>
         <member name="M:Backend.Controllers.TransfersController.Create(Backend.DTOs.Requests.CreateTransferRequest,System.String,System.Threading.CancellationToken)">
             <summary>
             Realiza uma transferência imediatamente.

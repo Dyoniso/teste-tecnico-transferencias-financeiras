@@ -107,8 +107,17 @@ public class TransferLimitService :
          */
         if (attempts > maximumAttempts)
         {
+            var oldestAttemptAt =
+                await _attemptRepository
+                    .GetOldestCreatedAtSinceAsync(
+                        accountId,
+                        since,
+                        cancellationToken);
+
             throw new BusinessException(
-                "Limite de tentativas por hora excedido.",
+                CreateLimitMessage(
+                    "Limite de tentativas por hora excedido.",
+                    oldestAttemptAt?.AddHours(1)),
                 StatusCodes.Status429TooManyRequests);
         }
 
@@ -128,10 +137,70 @@ public class TransferLimitService :
                     CultureInfo.GetCultureInfo(
                         "pt-BR"));
 
+            var nextAvailableAt =
+                await GetNextAmountAvailabilityAsync(
+                    accountId,
+                    since,
+                    amount,
+                    maximumAmount,
+                    cancellationToken);
+
             throw new BusinessException(
-                $"Limite de transferência por hora excedido. Limite atual: {formattedMaximumAmount}.",
+                CreateLimitMessage(
+                    $"Limite de transferência por hora excedido. Limite atual: {formattedMaximumAmount}.",
+                    nextAvailableAt),
                 StatusCodes.Status429TooManyRequests);
         }
+    }
+
+    private async Task<DateTime?> GetNextAmountAvailabilityAsync(
+        int accountId,
+        DateTime since,
+        decimal amount,
+        decimal maximumAmount,
+        CancellationToken cancellationToken)
+    {
+        if (amount > maximumAmount)
+        {
+            return null;
+        }
+
+        var completedTransfers =
+            await _transferRepository
+                .GetCompletedSinceAsync(
+                    accountId,
+                    since,
+                    cancellationToken);
+
+        var remainingAmount =
+            completedTransfers.Sum(x => x.Amount);
+
+        foreach (var transfer in completedTransfers)
+        {
+            remainingAmount -= transfer.Amount;
+
+            if (remainingAmount + amount <= maximumAmount)
+            {
+                return transfer.ProcessedAt?.AddHours(1);
+            }
+        }
+
+        return null;
+    }
+
+    private string CreateLimitMessage(
+        string message,
+        DateTime? nextAvailableAt)
+    {
+        if (nextAvailableAt is null)
+        {
+            return message;
+        }
+
+        var localNextAvailableAt =
+            GetLocalDateTime(nextAvailableAt.Value);
+
+        return $"{message} Você poderá transferir novamente a partir de {localNextAvailableAt:dd/MM/yyyy, HH:mm}.";
     }
 
     private DateTime GetLocalDateTime(

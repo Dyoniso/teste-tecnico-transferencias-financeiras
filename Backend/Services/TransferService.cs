@@ -291,6 +291,34 @@ public class TransferService :
             transfer);
     }
 
+    public async Task<IReadOnlyList<TransferResponse>>
+        GetHistoryByAccountIdAsync(
+            int accountId,
+            CancellationToken cancellationToken = default)
+    {
+        var account =
+            await _accountRepository
+                .GetByIdAsync(
+                    accountId,
+                    cancellationToken);
+
+        if (account is null)
+        {
+            throw new NotFoundException(
+                "Conta não encontrada.");
+        }
+
+        var transfers =
+            await _transferRepository
+                .GetHistoryByAccountIdAsync(
+                    accountId,
+                    cancellationToken);
+
+        return transfers
+            .Select(Map)
+            .ToList();
+    }
+
     public async Task CancelAsync(
         Guid id,
         CancellationToken cancellationToken = default)
@@ -783,6 +811,12 @@ public class TransferService :
 
             DestinationAccountId =
                 transfer.DestinationAccountId,
+
+            SourceAccountName =
+                transfer.SourceAccount?.Person?.Name,
+
+            DestinationAccountName =
+                transfer.DestinationAccount?.Person?.Name,
 
             Amount =
                 transfer.Amount,

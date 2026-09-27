@@ -13,6 +13,11 @@ public interface ITransferAttemptRepository
         DateTime since,
         CancellationToken cancellationToken = default);
 
+    Task<DateTime?> GetOldestCreatedAtSinceAsync(
+        int accountId,
+        DateTime since,
+        CancellationToken cancellationToken = default);
+
     void Add(
         TransferAttempt attempt);
 }

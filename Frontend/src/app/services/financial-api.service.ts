@@ -27,6 +27,8 @@ export class FinancialApiService {
   private readonly personsUrl = '/api/persons';
   private readonly accountsUrl = '/api/accounts';
   private readonly transfersUrl = '/api/transfers';
+  private readonly transferHistoryUrl =
+    '/api/transfer-history';
 
   // =====================================================
   // Pessoas
@@ -173,6 +175,18 @@ export class FinancialApiService {
   getTransfer(id: string): Observable<Transfer> {
     return this.http.get<Transfer>(
       `${this.transfersUrl}/${id}`,
+    );
+  }
+
+  /**
+   * Lista as movimentações enviadas, recebidas e
+   * agendadas de uma conta.
+   */
+  getTransferHistory(
+    accountId: number,
+  ): Observable<Transfer[]> {
+    return this.http.get<Transfer[]>(
+      `${this.transferHistoryUrl}/accounts/${accountId}`,
     );
   }
 

@@ -39,6 +39,20 @@ public class TransferAttemptRepository :
                 cancellationToken);
     }
 
+    public Task<DateTime?> GetOldestCreatedAtSinceAsync(
+        int accountId,
+        DateTime since,
+        CancellationToken cancellationToken = default)
+    {
+        return _context.TransferAttempts
+            .Where(x =>
+                x.AccountId == accountId &&
+                x.CreatedAt >= since)
+            .MinAsync(
+                x => (DateTime?)x.CreatedAt,
+                cancellationToken);
+    }
+
     public void Add(
         TransferAttempt attempt)
     {

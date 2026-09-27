@@ -39,6 +39,24 @@ public class TransferRepository :
     }
 
     public Task<List<Transfer>>
+        GetHistoryByAccountIdAsync(
+            int accountId,
+            CancellationToken cancellationToken = default)
+    {
+        return _context.Transfers
+            .AsNoTracking()
+            .Include(x => x.SourceAccount)
+                .ThenInclude(x => x.Person)
+            .Include(x => x.DestinationAccount)
+                .ThenInclude(x => x.Person)
+            .Where(x =>
+                x.SourceAccountId == accountId ||
+                x.DestinationAccountId == accountId)
+            .OrderByDescending(x => x.CreatedAt)
+            .ToListAsync(cancellationToken);
+    }
+
+    public Task<List<Transfer>>
         GetDueScheduledAsync(
             DateTime now,
             int limit,
@@ -71,6 +89,21 @@ public class TransferRepository :
                 x => (decimal?)x.Amount,
                 cancellationToken)
             ?? 0;
+    }
+
+    public Task<List<Transfer>> GetCompletedSinceAsync(
+        int accountId,
+        DateTime since,
+        CancellationToken cancellationToken = default)
+    {
+        return _context.Transfers
+            .AsNoTracking()
+            .Where(x =>
+                x.SourceAccountId == accountId &&
+                x.Status == TransferStatus.Completed &&
+                x.ProcessedAt >= since)
+            .OrderBy(x => x.ProcessedAt)
+            .ToListAsync(cancellationToken);
     }
 
     public void Add(

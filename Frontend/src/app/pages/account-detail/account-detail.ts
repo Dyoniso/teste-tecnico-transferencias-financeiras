@@ -13,6 +13,7 @@ import {
 
 import {
   finalize,
+  forkJoin,
 } from 'rxjs';
 
 import {
@@ -25,7 +26,6 @@ import {
   LucideLandmark,
   LucideRefreshCw,
   LucideSend,
-  LucideShieldCheck,
   LucideTrendingDown,
   LucideWalletCards,
   LucideX,
@@ -33,6 +33,7 @@ import {
 
 import {
   Account,
+  Transfer,
 } from '../../models/api.models';
 
 import {
@@ -57,7 +58,6 @@ import {
     LucideLandmark,
     LucideRefreshCw,
     LucideSend,
-    LucideShieldCheck,
     LucideTrendingDown,
     LucideWalletCards,
     LucideX,
@@ -80,6 +80,9 @@ export class AccountDetail implements OnInit {
 
   protected readonly account =
     signal<Account | null>(null);
+
+  protected readonly transfers =
+    signal<Transfer[]>([]);
 
   protected readonly loading = signal(true);
 
@@ -118,16 +121,21 @@ export class AccountDetail implements OnInit {
     this.loading.set(true);
     this.error.set(null);
 
-    this.api
-      .getAccount(this.accountId)
+    forkJoin({
+      account: this.api.getAccount(this.accountId),
+      transfers: this.api.getTransferHistory(
+        this.accountId,
+      ),
+    })
       .pipe(
         finalize(() => {
           this.loading.set(false);
         }),
       )
       .subscribe({
-        next: (account: Account) => {
+        next: ({ account, transfers }) => {
           this.account.set(account);
+          this.transfers.set(transfers);
         },
         error: (error: unknown) => {
           const message =
@@ -141,6 +149,101 @@ export class AccountDetail implements OnInit {
           );
         },
       });
+  }
+
+  protected transferDate(
+    transfer: Transfer,
+  ): string {
+    return new Intl.DateTimeFormat(
+      'pt-BR',
+      {
+        dateStyle: 'short',
+        timeStyle: 'short',
+      },
+    ).format(new Date(transfer.createdAt));
+  }
+
+  protected scheduledDate(
+    transfer: Transfer,
+  ): string | null {
+    if (!transfer.scheduledAt) {
+      return null;
+    }
+
+    return new Intl.DateTimeFormat(
+      'pt-BR',
+      {
+        dateStyle: 'short',
+        timeStyle: 'short',
+      },
+    ).format(new Date(transfer.scheduledAt));
+  }
+
+  protected isIncoming(
+    transfer: Transfer,
+  ): boolean {
+    return transfer.destinationAccountId ===
+      this.accountId;
+  }
+
+  protected transferType(
+    transfer: Transfer,
+  ): string {
+    if (transfer.scheduledAt) {
+      return this.isIncoming(transfer)
+        ? 'Agendada para receber'
+        : 'Agendada para enviar';
+    }
+
+    return this.isIncoming(transfer)
+      ? 'Recebida'
+      : 'Enviada';
+  }
+
+  protected relatedAccountId(
+    transfer: Transfer,
+  ): number {
+    return this.isIncoming(transfer)
+      ? transfer.sourceAccountId
+      : transfer.destinationAccountId;
+  }
+
+  protected relatedAccountName(
+    transfer: Transfer,
+  ): string {
+    const name = this.isIncoming(transfer)
+      ? transfer.sourceAccountName
+      : transfer.destinationAccountName;
+
+    return name?.trim() ||
+      `Conta #${this.relatedAccountId(transfer)}`;
+  }
+
+  protected transferStatusLabel(
+    status: string | null,
+  ): string {
+    switch (status?.toLowerCase()) {
+      case 'scheduled':
+        return 'Agendada';
+      case 'processing':
+        return 'Processando';
+      case 'completed':
+        return 'Concluída';
+      case 'failed':
+        return 'Falhou';
+      case 'cancelled':
+        return 'Cancelada';
+      default:
+        return status || 'Não informado';
+    }
+  }
+
+  protected transferStatusClass(
+    status: string | null,
+  ): string {
+    return `transfer-status-${
+      status?.toLowerCase() ?? 'unknown'
+    }`;
   }
 
   protected toggleOverdraft(): void {

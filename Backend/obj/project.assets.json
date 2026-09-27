@@ -3598,19 +3598,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\7z\\.nuget\\packages\\": {}
+    "C:\\Users\\Pedro Santos\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\7z\\Desktop\\teste-tecnico-transferencias-financeiras\\Backend\\Backend.csproj",
+      "projectUniqueName": "C:\\Users\\Pedro Santos\\Desktop\\teste-tecnico-transferencias-financeiras\\Backend\\Backend.csproj",
       "projectName": "Backend",
-      "projectPath": "C:\\Users\\7z\\Desktop\\teste-tecnico-transferencias-financeiras\\Backend\\Backend.csproj",
-      "packagesPath": "C:\\Users\\7z\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\7z\\Desktop\\teste-tecnico-transferencias-financeiras\\Backend\\obj\\",
+      "projectPath": "C:\\Users\\Pedro Santos\\Desktop\\teste-tecnico-transferencias-financeiras\\Backend\\Backend.csproj",
+      "packagesPath": "C:\\Users\\Pedro Santos\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Pedro Santos\\Desktop\\teste-tecnico-transferencias-financeiras\\Backend\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\7z\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\Pedro Santos\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net10.0"

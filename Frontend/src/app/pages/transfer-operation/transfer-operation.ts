@@ -25,7 +25,6 @@ import {
 import {
   LucideArrowLeft,
   LucideCalendarClock,
-  LucideLandmark,
   LucideSend,
   LucideShieldCheck,
   LucideWalletCards,
@@ -58,7 +57,6 @@ import {
     RouterLink,
     LucideArrowLeft,
     LucideCalendarClock,
-    LucideLandmark,
     LucideSend,
     LucideShieldCheck,
     LucideWalletCards,

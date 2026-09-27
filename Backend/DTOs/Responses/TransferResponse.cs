@@ -8,6 +8,10 @@ public class TransferResponse
 
     public int DestinationAccountId { get; set; }
 
+    public string? SourceAccountName { get; set; }
+
+    public string? DestinationAccountName { get; set; }
+
     public decimal Amount { get; set; }
 
     public string Status { get; set; } = string.Empty;

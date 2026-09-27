@@ -12,12 +12,21 @@ public interface ITransferRepository
         string key,
         CancellationToken cancellationToken = default);
 
+    Task<List<Transfer>> GetHistoryByAccountIdAsync(
+        int accountId,
+        CancellationToken cancellationToken = default);
+
     Task<List<Transfer>> GetDueScheduledAsync(
         DateTime now,
         int limit,
         CancellationToken cancellationToken = default);
 
     Task<decimal> GetCompletedAmountSinceAsync(
+        int accountId,
+        DateTime since,
+        CancellationToken cancellationToken = default);
+
+    Task<List<Transfer>> GetCompletedSinceAsync(
         int accountId,
         DateTime since,
         CancellationToken cancellationToken = default);

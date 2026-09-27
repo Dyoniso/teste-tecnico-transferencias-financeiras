@@ -90,39 +90,6 @@
   color: #dc2626;
 }
 
-.institution-badge {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  padding: 13px 16px;
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  background: rgb(255 255 255 / 72%);
-  box-shadow: var(--shadow-sm);
-}
-
-.institution-badge svg {
-  width: 22px;
-  height: 22px;
-  color: var(--accent);
-}
-
-.institution-badge small,
-.institution-badge strong {
-  display: block;
-}
-
-.institution-badge small {
-  margin-bottom: 2px;
-  color: var(--muted);
-  font-size: 0.68rem;
-}
-
-.institution-badge strong {
-  color: var(--ink);
-  font-size: 0.82rem;
-}
-
 .balance-section {
   display: grid;
   grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.75fr);
@@ -323,7 +290,7 @@
 }
 
 .section-block,
-.account-information,
+.history-section,
 .overdraft-panel {
   margin-top: 24px;
   padding: clamp(22px, 4vw, 30px);
@@ -575,38 +542,89 @@
   line-height: 1.5;
 }
 
-.information-list {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0;
-  margin: 0;
+.history-table-wrapper {
+  overflow-x: auto;
 }
 
-.information-list div {
-  padding: 17px 0;
+.history-table {
+  width: 100%;
+  min-width: 680px;
+  border-collapse: collapse;
+}
+
+.history-table th,
+.history-table td {
+  padding: 14px 12px;
   border-bottom: 1px solid #eef2f6;
+  text-align: left;
 }
 
-.information-list div:nth-child(odd) {
-  padding-right: 30px;
-}
-
-.information-list div:nth-child(even) {
-  padding-left: 30px;
-  border-left: 1px solid #eef2f6;
-}
-
-.information-list dt {
-  margin-bottom: 5px;
+.history-table th {
   color: var(--muted);
   font-size: 0.72rem;
+  font-weight: 700;
 }
 
-.information-list dd {
-  margin: 0;
+.history-table td {
   color: var(--ink);
-  font-size: 0.88rem;
+  font-size: 0.84rem;
+}
+
+.scheduled-date {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 0.74rem;
+  white-space: nowrap;
+}
+
+.history-table th:last-child,
+.history-table td:last-child {
+  text-align: right;
+}
+
+.transfer-status {
+  display: inline-flex;
+  padding: 5px 8px;
+  border-radius: 6px;
+  background: #f1f5f9;
+  color: var(--muted);
+  font-size: 0.72rem;
   font-weight: 700;
+}
+
+.transfer-status-completed {
+  background: #ecfdf3;
+  color: #15803d;
+}
+
+.transfer-status-scheduled,
+.transfer-status-processing {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.transfer-status-failed,
+.transfer-status-cancelled {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.transfer-amount {
+  color: var(--danger) !important;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.transfer-amount.incoming {
+  color: #15803d !important;
+}
+
+.history-empty {
+  margin: 0;
+  padding: 22px 0;
+  color: var(--muted);
+  text-align: center;
 }
 
 .error-state {
@@ -724,26 +742,14 @@
     flex-direction: column;
   }
 
-  .institution-badge {
-    width: 100%;
-  }
-
   .heading-meta {
     align-items: flex-start;
     flex-direction: column;
   }
 
   .financial-cards,
-  .overdraft-values,
-  .information-list {
+  .overdraft-values {
     grid-template-columns: 1fr;
-  }
-
-  .information-list div:nth-child(odd),
-  .information-list div:nth-child(even) {
-    padding-right: 0;
-    padding-left: 0;
-    border-left: 0;
   }
 
   .balance-card-footer {

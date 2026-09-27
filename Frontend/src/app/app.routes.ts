@@ -53,7 +53,7 @@ export const routes: Routes = [
       ).then(
         (component) => component.AccountDetail,
       ),
-    title: 'Detalhes da conta',
+    title: 'Conta e movimentações',
   },
   {
     path: '**',

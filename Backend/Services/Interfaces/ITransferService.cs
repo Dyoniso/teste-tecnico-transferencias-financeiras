@@ -19,6 +19,11 @@ public interface ITransferService
         Guid id,
         CancellationToken cancellationToken = default);
 
+    Task<IReadOnlyList<TransferResponse>>
+        GetHistoryByAccountIdAsync(
+            int accountId,
+            CancellationToken cancellationToken = default);
+
     Task CancelAsync(
         Guid id,
         CancellationToken cancellationToken = default);
