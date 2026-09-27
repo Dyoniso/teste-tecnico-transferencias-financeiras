@@ -2,6 +2,8 @@
 
 Aplicação para gerenciamento de pessoas, contas bancárias e transferências financeiras, permitindo consultar saldos e realizar transferências imediatas ou agendadas.
 
+<img width="1241" height="377" alt="image" src="https://github.com/user-attachments/assets/9aa27f58-8d27-4f00-afb3-e408ebc6a205" />
+
 ## Executando o projeto
 
 É necessário possuir **Docker Desktop** com o **Docker Compose** instalado e em execução.
