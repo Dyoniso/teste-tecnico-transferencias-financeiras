@@ -1,5 +1,3 @@
-Claro. Reorganizei para que a execução fique logo no topo, facilitando para quem está avaliando o projeto.
-
 # Transferências Financeiras
 
 Aplicação para gerenciamento de pessoas, contas bancárias e transferências financeiras, permitindo consultar saldos e realizar transferências imediatas ou agendadas.
@@ -50,6 +48,28 @@ http://localhost/swagger/
 ```
 
 O Swagger também permite executar requisições diretamente contra a API durante testes e validações.
+
+## Encerrando a aplicação
+
+Para interromper os containers:
+
+```bash
+docker compose down
+```
+
+Os dados armazenados no PostgreSQL permanecem preservados através do volume:
+
+```text
+postgres_data
+```
+
+Caso também seja necessário remover os dados persistidos localmente:
+
+```bash
+docker compose down -v
+```
+
+Assim, quem abrir o README consegue rodar e testar o projeto antes mesmo de entrar nos detalhes de arquitetura.
 
 ## Tecnologias e arquitetura
 
@@ -142,25 +162,3 @@ A aplicação utiliza:
 - **Nginx** como ponto único de entrada da aplicação.
 - Documentação interativa da API utilizando **Swagger**.
 - Ambiente containerizado utilizando **Docker Compose**.
-
-## Encerrando a aplicação
-
-Para interromper os containers:
-
-```bash
-docker compose down
-```
-
-Os dados armazenados no PostgreSQL permanecem preservados através do volume:
-
-```text
-postgres_data
-```
-
-Caso também seja necessário remover os dados persistidos localmente:
-
-```bash
-docker compose down -v
-```
-
-Assim, quem abrir o README consegue rodar e testar o projeto antes mesmo de entrar nos detalhes de arquitetura.
