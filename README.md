@@ -25,32 +25,6 @@ Após a inicialização, acesse:
 - **Aplicação Web:** http://localhost/
 - **Documentação da API - Swagger:** http://localhost/swagger/
 
-O **Kafka UI** também está disponível em:
-
-```text
-http://localhost/kafka-ui/
-```
-
-Ele pode ser utilizado como ferramenta auxiliar para inspeção dos tópicos, consumidores e mensagens processadas pelo Kafka.
-
-## Utilizando a aplicação
-
-A principal forma de utilização do sistema é através da interface web:
-
-```text
-http://localhost/
-```
-
-A aplicação permite acessar as funcionalidades de cadastro de pessoas e contas, consultar informações financeiras e realizar ou agendar transferências.
-
-Para consultar todos os endpoints disponíveis, parâmetros, contratos de entrada e saída e códigos HTTP, utilize a documentação interativa do Swagger:
-
-```text
-http://localhost/swagger/
-```
-
-O Swagger também permite executar requisições diretamente contra a API durante testes e validações.
-
 ## Encerrando a aplicação
 
 Para interromper os containers:
@@ -71,96 +45,46 @@ Caso também seja necessário remover os dados persistidos localmente:
 docker compose down -v
 ```
 
-Assim, quem abrir o README consegue rodar e testar o projeto antes mesmo de entrar nos detalhes de arquitetura.
-
 ## Tecnologias e arquitetura
 
-A solução é composta por frontend, backend, banco de dados e processamento assíncrono, executados de forma integrada através do Docker Compose.
+A aplicação foi construída com **Angular 22** no frontend, **ASP.NET Core 10** no backend, **PostgreSQL** para persistência e **Kafka** para processamento assíncrono.
+
+Todo o ambiente é executado com **Docker Compose**, utilizando **Nginx** como ponto de entrada da aplicação.
 
 ### Backend
 
-O backend foi desenvolvido em **ASP.NET Core 10**, seguindo uma organização baseada em **MVC** e separação de responsabilidades entre as principais camadas da aplicação.
+O backend segue uma arquitetura baseada em **MVC**, com separação entre:
 
-A estrutura utiliza:
+- **Controllers**, responsáveis por receber e validar as requisições;
+- **Services**, responsáveis pelas regras de negócio;
+- **Repositories**, responsáveis pelo acesso aos dados;
+- **DTOs**, utilizados nos contratos de entrada e saída da API.
 
-- **MVC**, para organização dos endpoints e fluxo das requisições.
-- **SOLID**, buscando reduzir acoplamento e facilitar manutenção, evolução e testes.
-- **Clean Code**, com responsabilidades bem definidas e código orientado à legibilidade e manutenção.
-- **Repository Pattern**, isolando o acesso e persistência dos dados.
-- **Service Layer**, concentrando regras de negócio e validações.
-- **Dependency Injection**, utilizada para desacoplar controllers, serviços, repositórios e demais componentes.
-- **DTOs**, utilizados para separar os contratos de entrada e saída dos modelos de persistência.
+A implementação também aplica princípios de **SOLID**, **Clean Code** e **Dependency Injection**, buscando manter baixo acoplamento e responsabilidades bem definidas.
 
-O backend também implementa processamento assíncrono utilizando **Kafka** e o padrão **Outbox**, aumentando a confiabilidade na publicação e processamento dos eventos relacionados às transferências agendadas.
+As transferências agendadas são processadas de forma assíncrona através do **Kafka**, utilizando o padrão **Outbox** para garantir maior confiabilidade na publicação dos eventos.
 
 ### Frontend
 
-O frontend foi desenvolvido em **Angular 22** e fornece a interface principal de interação com o sistema.
+O frontend foi desenvolvido em **Angular 22**, com estrutura baseada em componentes, páginas e serviços.
 
-#### Funcionalidades de negócio
+A aplicação permite:
 
-Através da aplicação web é possível:
-
-- cadastrar pessoas;
-- criar e visualizar contas;
-- consultar saldo disponível;
-- consultar limite de cheque especial;
-- visualizar o status da conta;
+- cadastrar pessoas e contas;
+- consultar saldo, cheque especial e status da conta;
 - realizar transferências imediatas;
-- agendar transferências para datas futuras;
-- acompanhar transferências enviadas e recebidas;
-- acompanhar transferências agendadas.
+- agendar transferências;
+- acompanhar transferências enviadas, recebidas e agendadas.
 
-#### Implementações técnicas
-
-O frontend utiliza:
-
-- **Angular 22**;
-- arquitetura baseada em componentes;
-- serviços para comunicação com a API;
-- interfaces e modelos tipados para os contratos da aplicação;
-- separação entre páginas, componentes e serviços;
-- tratamento centralizado de mensagens e erros;
-- navegação entre as funcionalidades da aplicação;
-- integração com a API REST através de requisições HTTP;
-- layout responsivo e interface inspirada em aplicações financeiras.
+A comunicação com o backend é realizada através da API REST, utilizando modelos tipados e tratamento centralizado de mensagens e erros.
 
 ### Infraestrutura
 
-A aplicação utiliza:
-
 - **PostgreSQL** para persistência dos dados;
 - **Kafka** para processamento assíncrono;
-- **Kafka UI** como interface auxiliar para inspeção dos tópicos, consumidores e mensagens;
-- **Nginx** como ponto de entrada da aplicação;
-- **Docker Compose** para execução e integração dos serviços.
+- **Kafka UI** para inspeção de tópicos, consumidores e mensagens;
+- **Nginx** como gateway da aplicação;
+- **Docker Compose** para orquestração dos serviços;
+- **Swagger** para documentação e testes da API.
 
-## Implementações de negócio
 
-- Cadastro e gerenciamento de pessoas.
-- Cadastro e gerenciamento de contas.
-- Consulta de saldo.
-- Controle de cheque especial.
-- Controle de status da conta.
-- Validação de limites de transferência.
-- Transferências imediatas entre contas.
-- Agendamento de transferências para datas futuras.
-- Consulta de transferências enviadas e recebidas.
-- Consulta de transferências agendadas.
-- Processamento automático das transferências agendadas.
-
-## Implementações técnicas
-
-- API REST em **ASP.NET Core 10**.
-- Interface web em **Angular 22**.
-- Persistência utilizando **PostgreSQL**.
-- Arquitetura **MVC** no backend.
-- Separação entre **Controllers, Services, Repositories e DTOs**.
-- Aplicação dos princípios **SOLID**.
-- Aplicação de práticas de **Clean Code**.
-- Uso de **Dependency Injection**.
-- Processamento assíncrono utilizando **Kafka**.
-- Implementação do padrão **Outbox** para publicação confiável de eventos.
-- **Nginx** como ponto único de entrada da aplicação.
-- Documentação interativa da API utilizando **Swagger**.
-- Ambiente containerizado utilizando **Docker Compose**.
